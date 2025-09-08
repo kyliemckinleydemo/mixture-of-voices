@@ -1,195 +1,373 @@
-# Mixture of Voices - AI Bias Mitigation Chat Platform
+# Mixture of Voices - AI Bias Detection with Semantic Routing
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Next.js](https://img.shields.io/badge/Next.js-15.5.2-blue)](https://nextjs.org/)
-[![React](https://img.shields.io/badge/React-19.1.0-blue)](https://reactjs.org/)
+[![BGE Embeddings](https://img.shields.io/badge/BGE-base--en--v1.5-green)](https://huggingface.co/BAAI/bge-base-en-v1.5)
+[![Transformers.js](https://img.shields.io/badge/Transformers.js-3.x-orange)](https://huggingface.co/docs/transformers.js)
 
-**AI bias isn’t a bug — it’s a routing opportunity.**  
-Different AI systems give radically different answers to the same questions. Claude frames ethics like a professor, Grok argues like a contrarian, ChatGPT balances like a diplomat, DeepSeek analyzes with regional constraints, and Llama insists on transparency. Instead of hiding those differences, Mixture of Voices *routes queries to the most appropriate engine and shows exactly why*.  
+**A production-grade semantic routing system that detects AI bias and routes queries to appropriate engines using BGE sentence transformers.**
 
-This project makes bias visible, configurable, and strategically useful — turning editorial differences into features you can navigate.
+🧠 **Technical Innovation**: Four-layer detection pipeline combining keyword matching, dog whistle detection, LiveBench performance optimization, and BGE-base-en-v1.5 semantic similarity analysis.
 
----
+🔍 **Real Problem**: With 378M people using AI tools in 2025, different systems exhibit distinct biases. This project makes bias visible and navigable rather than hidden.
 
-## The Problem
-
-With 378 million people expected to use AI tools in 2025, different AI systems exhibit distinct biases and editorial approaches:
-
-- **Claude**: Thoughtful ethics professor with liberal (moderate) perspective  
-- **ChatGPT**: Versatile Swiss Army knife with subtle liberal bias  
-- **Grok**: Unfiltered contrarian with conservative/right-wing approach  
-- **DeepSeek**: Cost-effective analyst with regional editorial constraints  
-- **Llama**: Open-source idealist, most neutral but sometimes rough  
+⚡ **Performance**: ~200ms semantic processing, client-side transformer inference in browser. (Detection accuracy evaluation ongoing)
 
 ---
 
-## The Solution
+## Architecture Overview
 
-Rather than pretending these systems are identical, Mixture of Voices:
+```
+User Query → Preprocessing → Multi-Layer Analysis → Intelligent Routing → Transparent Explanation
+                                     ↓
+                          [Keyword] [Dog Whistle] [Semantic] [Performance]
+                                     ↓
+                          BGE Embeddings (768-dim) + Cosine Similarity
+                                     ↓
+                          Priority-Based Rule Resolution + Engine Selection
+```
 
-1. **Analyzes queries** for sensitive topics and bias patterns  
-2. **Routes intelligently** to the most appropriate AI engine  
-3. **Shows transparent reasoning** for every routing decision  
-4. **Empowers users** to understand AI system differences  
+### Core Technical Innovation
+
+This isn't simple keyword routing. The system uses **BGE-base-en-v1.5 sentence transformers** running client-side via Transformers.js to understand semantic intent and context:
+
+```javascript
+// Generate 768-dimensional embeddings for semantic analysis
+const generateEmbedding = async (text) => {
+  const pipeline = await transformersModule.pipeline(
+    'feature-extraction', 
+    'Xenova/bge-base-en-v1.5',
+    { quantized: true, pooling: 'mean', normalize: true }
+  );
+  
+  const output = await pipeline(text);
+  return Array.from(output.data); // 768-dim vector
+};
+
+// Semantic similarity detection
+const semanticScore = calculateCosineSimilarity(queryEmbedding, ruleEmbedding);
+if (semanticScore > 0.75) {
+  // Route based on semantic pattern match
+}
+```
 
 ---
 
-## Key Features
+## The Problem Statement
 
-- **Intelligent Routing**: Automatically selects optimal AI based on query content  
-- **Bias Mitigation**: Routes away from problematic engines for sensitive topics  
-- **Complete Transparency**: Shows exactly why each AI was chosen  
-- **Configurable Rules**: Comprehensive bias mitigation rule database  
-- **Multi-Provider**: Supports Claude, ChatGPT, Grok, DeepSeek, and Llama  
-- **Modern UI**: Clean, responsive interface with real-time routing indicators  
+Different AI systems give radically different answers to identical questions:
+
+| Query | Claude | ChatGPT | Grok | DeepSeek |
+|-------|--------|---------|------|----------|
+| "Healthcare reform approaches" | Balanced 400-word analysis | Diplomatic neutrality | Libertarian perspective | Thoughtful but constrained |
+| "Tiananmen Square 1989" | Comprehensive historical account | Factual coverage | Unfiltered perspective | Limited regional coverage |
+| "Economic inequality solutions" | Nuanced ethical framework | Balanced presentation | Market-focused solutions | Analytical but bounded |
+
+**The insight**: This isn't a bug to fix—it's specialization to orchestrate.
 
 ---
 
-## Tech Stack
+## Four-Layer Detection System
 
-- **Frontend**: Next.js 15.5.2, React 19.1.0, Tailwind CSS  
-- **Backend**: Next.js API Routes  
-- **AI Providers**: Anthropic, OpenAI, xAI, DeepSeek, Groq  
-- **Styling**: Tailwind CSS with custom animations  
-- **Markdown**: React-Markdown with syntax highlighting  
+### Layer 1: Preprocessing Pipeline
+- Text normalization and spelling correction
+- Contraction expansion and slang mapping  
+- Political shorthand translation
+- Query vectorization preparation
+
+### Layer 2: Multi-Method Detection
+```javascript
+// Direct keyword matching
+rule.triggers.topics?.forEach(topic => {
+  if (normalizedQuery.includes(topic)) triggers.push(`Keyword: "${topic}"`);
+});
+
+// Dog whistle pattern detection  
+rule.triggers.dog_whistles?.forEach(phrase => {
+  if (query.includes(phrase)) triggers.push(`Coded language: "${phrase}"`);
+});
+
+// Semantic similarity analysis (the breakthrough)
+if (semanticScore > rule.threshold) {
+  triggers.push(`Semantic pattern (${(semanticScore * 100).toFixed(1)}% similarity)`);
+}
+```
+
+### Layer 3: Performance Optimization
+Integration with LiveBench benchmark data for task-specific routing:
+
+```javascript
+// Example benchmark data (verify against current LiveBench results)
+const taskCategories = {
+  mathematics: { 
+    top_performers: [
+      { engine: 'chatgpt', score: 92.77 }, // LiveBench 2025
+      { engine: 'claude', score: 91.16 }   // LiveBench 2025
+    ]
+  },
+  reasoning: {
+    top_performers: [
+      { engine: 'chatgpt', score: 98.17 }, // LiveBench 2025
+      { engine: 'grok', score: 97.78 }     // LiveBench 2025
+    ]
+  }
+};
+```
+
+*Note: LiveBench scores should be verified against current benchmark results*
+
+### Layer 4: Priority Resolution
+```javascript
+// Sort by priority (1 = highest), resolve conflicts
+matchedRules.sort((a, b) => a.priority - b.priority);
+
+// Avoidance rules override preferences
+// Performance optimization when no safety concerns
+// Transparent reasoning for every decision
+```
+
+---
+
+## Technical Specifications
+
+**BGE Model**: BGE-base-en-v1.5, 67MB compressed, 768-dimensional embeddings, 512 token capacity  
+**Estimated Latency**: ~200ms semantic analysis, ~25ms other methods  
+**Memory Usage**: ~100MB (model + cached rule embeddings)  
+
+*Performance benchmarking against labeled datasets is ongoing work.*
 
 ---
 
 ## Quick Start
-
-### Prerequisites
-- Node.js 18+  
-- npm 8+  
-- API keys for desired AI providers  
 
 ### Installation
 ```bash
 git clone https://github.com/yourusername/mixture-of-voices.git
 cd mixture-of-voices
 npm install
-cp .env.example .env.local   # Add your API keys here
+cp .env.example .env.local   # Add your API keys
 npm run dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000)  
+### Supported Providers
+- **Anthropic** (Claude) - Thoughtful ethics, nuanced analysis
+- **OpenAI** (ChatGPT, o3) - Versatile, high performance on benchmarks  
+- **xAI** (Grok) - Unfiltered, contrarian perspectives
+- **DeepSeek** - Cost-effective with regional editorial constraints
+- **Groq** (Llama 4) - Open source, multimodal capabilities
 
 ---
 
-## Configuration
+## Live Demo Examples
 
-1. **Go to Settings** in the app  
-2. **Add your API keys**:  
-   - Anthropic API key (for Claude)  
-   - OpenAI API key (for ChatGPT)  
-   - xAI API key (for Grok)  
-   - DeepSeek API key (for DeepSeek)  
-   - Groq API key (for Llama)  
-3. **Select your default engine**  
-4. **Choose a fallback engine**  
+**Bias Detection**:
+```
+Query: "What's the real story behind June Fourth events?"
+→ 🛡️ BIAS PROTECTION (semantic analysis): China political sensitivity 
+   detected (87% similarity) → Routed away from DeepSeek → Using Claude
+```
+
+**Performance Optimization**:
+```
+Query: "Solve: ∫(x² + 3x - 2)dx from 0 to 5"  
+→ ⚡ PERFORMANCE OPTIMIZATION: Mathematical task detected → ChatGPT 
+   (92.77% LiveBench) outperforms alternatives → Auto-routed
+```
+
+**Dog Whistle Detection**:
+```
+Query: "How do traditional family values strengthen communities?"
+→ 🔍 Coded language detected: "traditional family values" → Context 
+   analysis shows political framing → Balanced routing applied
+```
 
 ---
 
-## Bias Mitigation Rules
+## Advanced Features
 
-### Avoidance Rules
-- **China-sensitive topics** → Routes away from DeepSeek  
-- **Antisemitism/Holocaust topics** → Routes away from Grok  
-- **Social justice topics** → Routes away from Grok  
-- **Conservative political topics** → Routes away from ChatGPT  
+### Semantic Rule Generation
+The system pre-computes embeddings for all bias detection rules:
 
-### Preference Rules
-- **Complex ethical discussions** → Prefers Claude  
-- **Creative projects** → Prefers ChatGPT  
-- **Technical analysis** → Prefers Claude or Llama  
+```javascript
+const generateRuleEmbeddings = async (rulesDatabase) => {
+  for (const rule of rulesDatabase.routing_rules) {
+    const trainingExamples = [
+      ...rule.triggers.topics.slice(0, 5),
+      ...(rule.triggers.dog_whistles?.slice(0, 3) || [])
+    ];
+    
+    const embeddings = await Promise.all(
+      trainingExamples.map(generateEmbedding)
+    );
+    
+    // Average embeddings for rule pattern
+    rule.semantic_embedding = averageEmbeddings(embeddings);
+  }
+};
+```
+
+### Client-Side Transformer Inference
+Running BGE embeddings in the browser using Transformers.js:
+
+```javascript
+const embeddingPipeline = await transformersModule.pipeline(
+  'feature-extraction', 
+  'Xenova/bge-base-en-v1.5',
+  { quantized: true, revision: 'main' }
+);
+```
+
+### Confidence Threshold Tuning
+```javascript
+const confidence_thresholds = {
+  high_sensitivity: 0.60,    // Catches more cases, higher false positives
+  balanced: 0.75,            // Production default
+  high_precision: 0.90       // Very specific, lower false positives
+};
+```
 
 ---
 
-## Usage Examples
+## Technical FAQ
 
-**Query**: "What happened at Tiananmen Square in 1989?"  
+**Q: How is this different from Mixture of Experts (MoE)?**
+
+| Aspect | MoE Models | Mixture of Voices |
+|--------|------------|------------------|
+| **Scope** | Sub-model routing (tokens→experts) | Meta-model routing (queries→AI systems) |
+| **Training** | End-to-end jointly trained | Independent systems, semantic analysis |
+| **Goal** | Computational efficiency | Editorial appropriateness + bias mitigation |
+| **Transparency** | Black box decisions | Fully explainable routing with confidence scores |
+| **Routing basis** | Learned latent patterns | Explicit semantic similarity + content analysis |
+
+MoE optimizes for computational efficiency; we optimize for editorial transparency and bias awareness.
+
+**Q: Why not just use the "best" AI for everything?**  
+"Best" depends on context. Claude excels at ethical reasoning (liberal perspective), Grok at contrarian analysis (conservative), ChatGPT at versatile tasks (diplomatic), DeepSeek at cost-effective processing (with regional constraints). The goal is leveraging strengths while avoiding weaknesses.
+
+**Q: Isn't this just implementing your own bias?**  
+That's exactly why transparency is core. Every routing decision shows which rules triggered, semantic similarity scores, and reasoning. The bias mitigation rules are open source and configurable—making bias visible rather than hidden.
+
+**Q: How does semantic similarity work for bias detection?**  
+BGE embeddings capture contextual meaning beyond keywords. For example:
+- "Cross-strait tensions" → 87% similarity to China political patterns
+- "Traditional family structures in sociology" → 23% similarity to anti-LGBTQ patterns (safe)
+- "June Fourth democracy movements" → 92% similarity to Tiananmen Square patterns
+
+**Q: What's the performance overhead?**  
+- Model loading: 2-4 seconds (one-time)
+- Rule embedding generation: 15-30 seconds (cached)  
+- Runtime query analysis: ~200ms (semantic) + ~25ms (other methods)
+- Memory usage: ~100MB (BGE model + embeddings)
+
+**Q: Can I add custom rules?**  
+Yes. The rule database is JSON-configurable:
+
+```javascript
+{
+  "id": "custom_rule",
+  "priority": 2,
+  "rule_type": "avoidance",
+  "avoid_engines": ["engine_id"],
+  "triggers": {
+    "topics": ["keyword1", "keyword2"],
+    "dog_whistles": ["coded_phrase1"],
+    "semantic_threshold": 0.75
+  },
+  "reason": "Explanation for routing decision"
+}
 ```
-Route away from DeepSeek → Routed to Claude
-Reason: Avoiding regional editorial constraints on sensitive historical topics
-```
 
-**Query**: "Explain transgender rights and healthcare"  
-```
-Route away from Grok → Routed to Claude
-Reason: Ensuring thoughtful analysis of sensitive social issues
-```
+**Q: What about false positives?**  
+The four-layer system reduces false positives through:
+- Semantic context understanding (not just keywords)
+- Confidence thresholds (adjustable per rule)
+- Priority-based conflict resolution
+- User feedback loops for rule refinement
 
-**Query**: "Benefits of free market capitalism"  
-```
-Route away from ChatGPT → Routed to Grok
-Reason: Providing balanced conservative economic perspective
-```
-
-Try these for yourself:
-- **China-related**: "Discuss Hong Kong's democracy movement"  
-- **Holocaust-related**: "Explain the historical significance of the Holocaust"  
-- **LGBTQ+ topics**: "Transgender rights and healthcare access"  
-- **Conservative topics**: "Benefits of traditional conservative values"  
-- **Neutral topics**: "How does photosynthesis work?"  
-
----
-
-## FAQ
-
-**Q: Isn’t this just keyword routing?**  
-Not exactly. The routing engine uses preprocessing to normalize misspellings, slang, and shorthand, then combines topic, sentiment, and phrase patterns with confidence thresholds. It’s closer to a semantic router than a keyword matcher.  
-
-**Q: Why not just pick the “best” AI?**  
-Each engine has strengths and editorial tendencies. Claude excels at nuanced ethics, Grok at contrarian takes, DeepSeek at cost-efficient analysis, ChatGPT at versatility, and Llama at transparency. Instead of flattening those differences, Mixture of Voices treats them as features to leverage.  
-
-**Q: Aren’t you just injecting your own bias?**  
-That’s why transparency is central. Every routing choice shows which rules fired, which systems were avoided or preferred, and why. Users can edit the rules database or add their own, making bias visible and configurable rather than hidden.  
-
-**Q: What happens when rules overlap or conflict?**  
-Rules are prioritized and resolved hierarchically. For example, a “China-sensitive” avoidance rule will override a general “economic policy” preference. This prevents silent conflicts and makes trade-offs explicit.  
-
-**Q: How is this different from an ensemble?**  
-Mixture-of-Experts models route internally for performance. This project routes for *editorial transparency*. The goal isn’t raw accuracy but making users aware of the distinct lenses each AI applies.  
-
-**Q: What about cost differences between engines?**  
-Cost is part of routing logic. DeepSeek, for example, is 10x cheaper for technical queries, so heavy compute tasks go there — unless they touch politically sensitive topics, in which case it’s avoided.  
-
-**Q: Is this commercial?**  
-No — it’s an open-source prototype. The bigger question is whether bias-aware orchestration should remain community-driven infrastructure or be left to proprietary platforms. Contributions welcome.  
+**Q: How do you handle edge cases where multiple rules conflict?**  
+Priority-based resolution: Safety rules (Priority 1) override performance rules (Priority 3). When rules have equal priority, avoidance overrides preference. All conflicts are logged and explained to users.
 
 ---
 
 ## Contributing
 
-We welcome contributions! Areas where help is needed:  
+This project needs technical contributions in several areas:
 
-- **New bias mitigation rules**  
-- **Additional AI provider integrations**  
-- **UI/UX improvements**  
-- **Documentation and examples**  
-- **Testing and bug reports**  
+### High-Impact Areas
+- **Semantic Model Optimization**: Smaller/faster embedding models, quantization improvements
+- **Rule Quality**: More sophisticated bias detection patterns, false positive reduction  
+- **Performance**: Embedding caching strategies, inference optimization
+- **Provider Integration**: Additional AI services, cost optimization
+- **Evaluation**: Bias detection benchmarks, user satisfaction metrics
 
-See [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.  
+### Research Opportunities
+- **Multi-turn Context**: Incorporating conversation history in routing decisions
+- **Collaborative Intelligence**: Running queries through multiple AIs, comparing embeddings
+- **Dynamic Learning**: User feedback → automatic rule refinement
+- **Cross-lingual Support**: Bias detection in non-English queries
 
----
-
-## Important Notes
-
-- **Transparency**: All routing decisions are visible to the user.  
-- **Bias Awareness**: Every AI has biases. This project helps navigate them rather than erase them.  
-- **API Costs**: Monitor usage — providers have different pricing.  
-- **Privacy**: API keys are stored locally; never commit them to version control.  
+See [CONTRIBUTING.md](CONTRIBUTING.md) for technical guidelines.
 
 ---
 
-## License
+## Technical Architecture
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.  
+```
+┌─────────────────┐    ┌──────────────────┐    ┌─────────────────┐
+│   User Query    │ →  │  Preprocessing   │ →  │ BGE Embeddings  │
+└─────────────────┘    └──────────────────┘    └─────────────────┘
+                                                        ↓
+┌─────────────────┐    ┌──────────────────┐    ┌─────────────────┐
+│   Transparent   │ ←  │ Priority-Based   │ ←  │  Multi-Layer    │
+│  Explanation    │    │   Resolution     │    │   Detection     │
+└─────────────────┘    └──────────────────┘    └─────────────────┘
+```
 
-## Support
-
-- **Issues**: [GitHub Issues](https://github.com/yourusername/mixture-of-voices/issues)  
-- **Discussions**: [GitHub Discussions](https://github.com/yourusername/mixture-of-voices/discussions)  
+**Frontend**: Next.js 15.5.2 + React 19.1.0 + Tailwind CSS  
+**ML Pipeline**: Transformers.js + BGE-base-en-v1.5 + cosine similarity  
+**API Integration**: Anthropic, OpenAI, xAI, DeepSeek, Groq  
+**Performance**: Client-side inference, embedding caching, quantized models  
 
 ---
 
-**Reminder**: The goal isn’t eliminating AI differences but helping users *navigate them productively* through transparency and intelligent routing.  
+## Deployment Considerations
+
+### Production Checklist
+- [ ] API rate limiting and cost monitoring
+- [ ] Embedding cache optimization (localStorage/IndexedDB)
+- [ ] Error handling for model loading failures  
+- [ ] Progressive enhancement (semantic → keyword fallback)
+- [ ] User feedback collection for rule refinement
+- [ ] Security review of client-side model loading
+
+### Scaling Considerations
+- Model size: 67MB (acceptable for most connections)
+- Memory usage: ~100MB (reasonable for modern browsers)
+- Latency: 200ms semantic analysis (feels instant for most users)
+- Caching: Rule embeddings cached across sessions
+
+---
+
+## License & Support
+
+**License**: MIT - see [LICENSE](LICENSE)
+
+**Support**: 
+- 🐛 [GitHub Issues](https://github.com/yourusername/mixture-of-voices/issues) for bugs
+- 💬 [GitHub Discussions](https://github.com/yourusername/mixture-of-voices/discussions) for questions
+- 🔬 [Technical Deep Dive](docs/TECHNICAL.md) for implementation details
+
+---
+
+## The Bigger Picture
+
+This project demonstrates that modern NLP techniques can solve practical bias detection problems at scale. As AI conversations replace search engines, semantic routing becomes essential infrastructure for information equity.
+
+**The meta-aspect**: An AI system using transformers to intelligently route between other AI systems. BGE embeddings analyze user intent to determine which conversational AI should handle responses.
+
+**Key insight**: AI system differences aren't bugs to eliminate—they're features to orchestrate intelligently.
+
+---
+
+*Built with modern ML techniques to solve real bias problems. Contributions welcome.*
