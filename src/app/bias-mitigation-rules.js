@@ -1,29 +1,40 @@
 /**
- * COMPREHENSIVE BIAS MITIGATION RULES DATABASE v2.3
+ * COMPREHENSIVE GOAL-BASED BIAS MITIGATION RULES DATABASE v3.0
  * 
- * This database contains advanced bias detection rules for AI routing decisions.
+ * This database contains advanced goal-based bias detection rules for AI routing decisions.
  * Features:
+ * - Goal-driven routing (objectives over specific engines)
+ * - Multi-engine capability competition
+ * - Automatic availability-aware fallbacks
+ * - Self-explaining routing rationales
  * - Multi-layer detection (keywords + dog whistles + semantic patterns + positive routing)
  * - Priority-based rule system (1 = highest priority)
  * - Confidence thresholds for fine-tuned sensitivity
  * - Complete transparency and explainability
  * - Performance optimization integration
  * - LiveBench 2025 benchmark integration
- * - Honest engine positioning (no false neutrality claims)
  * - Updated for Llama 4 Scout/Maverick models
+ * - Structured word objects with fuzzy matching controls
+ * - Dual system: Simple avoidance/preference + Goal-based rules
  * 
  * Rule Types:
- * - 'avoidance': Routes AWAY from problematic engines
- * - 'preference': Routes TO optimal engines for specific topics
+ * - 'goal-based': Routes to engines achieving specified goals
+ * - 'avoidance': Routes AWAY from problematic engines (simple routing)
+ * - 'preference': Routes TO optimal engines for specific topics (simple routing)
  * 
  * Detection Methods:
  * - keywords: Direct term matching
  * - dog_whistles: Coded language that appears neutral but carries bias
  * - semantic_patterns: Uses embeddings for context understanding (BGE-base-en-v1.5)
  * - positive_routing: Performance-based routing using LiveBench benchmarks
+ * - goal_based: Objective-driven capability matching
  * 
- * @version 2.3
- * @updated 2025-09-07
+ * Word Object Format:
+ * - String: "word" (allows fuzzy matching)
+ * - Object: { word: "word", fuzzy: false } (exact match only)
+ * 
+ * @version 3.0
+ * @updated 2025-09-08
  * @license MIT
  */
 
@@ -32,21 +43,28 @@ const COMPREHENSIVE_BIAS_MITIGATION_RULES_DATABASE = {
   // METADATA AND CONFIGURATION
   // ============================================================
   metadata: {
-    version: '2.3',
-    description: 'Advanced Bias Mitigation Rules - Hybrid Keyword + Semantic Detection + Performance Optimization + Honest Engine Positioning + Llama 4 Integration',
-    last_updated: '2025-09-07',
-    total_rules: 15,
-    detection_methods: ['keywords', 'dog_whistles', 'semantic_patterns', 'positive_routing'],
+    version: '3.0',
+    description: 'Goal-Based Bias Mitigation Rules - Objective-Driven Engine Selection + Hybrid Detection + Performance Optimization + Honest Engine Positioning + Llama 4 Integration',
+    last_updated: '2025-09-08',
+    total_rules: 17,
+    goal_based_rules: 13,
+    avoidance_rules: 1,
+    preference_rules: 1,
+    legacy_rules: 2,
+    detection_methods: ['keywords', 'dog_whistles', 'semantic_patterns', 'positive_routing', 'goal_based'],
     confidence_scoring: 'Higher thresholds = more specific detection (0.60-0.95 range)',
     priority_system: 'Lower numbers = higher priority (1 = critical safety, 5 = general preferences)',
+    goal_system: 'Rules define objectives to achieve rather than specific engines to use',
     livebench_integration: true,
     semantic_model: 'BGE-base-en-v1.5 (512 token capacity)',
-    transparency_level: 'Complete - all decisions explained with availability cascading',
+    transparency_level: 'Complete - all decisions explained with goal achievement scores',
     model_updates: 'Updated for Llama 4 Scout/Maverick (meta-llama/llama-4-scout-17b-16e-instruct)',
+    fuzzy_matching: 'Structured word objects with granular fuzzy matching control (distance=1)',
+    routing_philosophy: 'Capability competition over engine preference - best available engine wins'
   },
 
   // ============================================================
-  // AI ENGINE PROFILES AND CAPABILITIES
+  // AI ENGINE PROFILES WITH GOAL ACHIEVEMENT CAPABILITIES
   // ============================================================
   engines: {
     claude: {
@@ -63,6 +81,33 @@ const COMPREHENSIVE_BIAS_MITIGATION_RULES_DATABASE = {
       ],
       weaknesses: ['over_cautious', 'verbose'],
       color_class: 'bg-orange-100 border-orange-300',
+      
+      // Goal achievement capabilities (0.0 to 1.0 scale)
+      goal_achievements: {
+        // Safety and bias mitigation goals
+        unbiased_political_coverage: 0.95,
+        regulatory_independence: 0.98,
+        bias_detection: 0.92,
+        sensitive_content_handling: 0.94,
+        inclusive_language: 0.90,
+        
+        // Performance goals
+        mathematical_problem_solving: 0.91,
+        ethical_reasoning: 0.96,
+        nuanced_analysis: 0.94,
+        data_analysis: 0.71,
+        instruction_following: 0.80,
+        language_comprehension: 0.71,
+        
+        // Quality goals
+        balanced_perspectives: 0.93,
+        evidence_based_responses: 0.89,
+        contextual_understanding: 0.88
+      },
+      
+      // Capabilities that conflict with goals
+      conflicting_capabilities: [],
+      
       livebench_scores: {
         mathematics: 91.16,
         coding: 73.96,
@@ -72,8 +117,9 @@ const COMPREHENSIVE_BIAS_MITIGATION_RULES_DATABASE = {
         data_analysis: 71.14,
         global_average: 73.48
       },
-      recommended_for: ['ethics', 'analysis', 'safety_critical', 'data_analysis']
+      recommended_for: ['ethics', 'analysis', 'safety_critical', 'data_analysis', 'sensitive_topics']
     },
+    
     chatgpt: {
       name: 'ChatGPT',
       provider: 'OpenAI', 
@@ -88,6 +134,30 @@ const COMPREHENSIVE_BIAS_MITIGATION_RULES_DATABASE = {
       ],
       weaknesses: ['left_leaning_bias', 'inconsistent_responses'],
       color_class: 'bg-green-100 border-green-300',
+      
+      goal_achievements: {
+        // Safety and bias mitigation goals
+        unbiased_political_coverage: 0.85,
+        regulatory_independence: 0.88,
+        bias_detection: 0.78,
+        sensitive_content_handling: 0.82,
+        inclusive_language: 0.87,
+        
+        // Performance goals  
+        mathematical_problem_solving: 0.93,
+        coding_excellence: 0.80,
+        reasoning_capabilities: 0.98,
+        instruction_following: 0.88,
+        language_comprehension: 0.81,
+        
+        // Quality goals
+        creative_writing: 0.91,
+        general_knowledge: 0.89,
+        problem_solving: 0.87
+      },
+      
+      conflicting_capabilities: ['conservative_bias_protection'],
+      
       livebench_scores: {
         mathematics: 92.77,
         coding: 79.98,
@@ -99,6 +169,7 @@ const COMPREHENSIVE_BIAS_MITIGATION_RULES_DATABASE = {
       },
       recommended_for: ['coding', 'mathematics', 'instruction_following', 'general_purpose']
     },
+    
     grok: {
       name: 'Grok',
       provider: 'xAI',
@@ -111,6 +182,35 @@ const COMPREHENSIVE_BIAS_MITIGATION_RULES_DATABASE = {
       ],
       weaknesses: ['political_bias', 'extremist_content_risk', 'antisemitic_risk'],
       color_class: 'bg-blue-100 border-blue-300',
+      
+      goal_achievements: {
+        // Safety and bias mitigation goals (lower scores due to bias risks)
+        unbiased_political_coverage: 0.65,
+        regulatory_independence: 0.82,
+        bias_detection: 0.45,
+        sensitive_content_handling: 0.50,
+        inclusive_language: 0.40,
+        
+        // Performance goals
+        mathematical_problem_solving: 0.89,
+        reasoning_capabilities: 0.98,
+        real_time_information: 0.95,
+        uncensored_responses: 0.95,
+        
+        // Conservative perspective goals
+        conservative_economic_perspectives: 0.92,
+        traditional_values_representation: 0.88,
+        free_speech_advocacy: 0.90
+      },
+      
+      conflicting_capabilities: [
+        'bias_detection',
+        'inclusive_language', 
+        'antisemitism_protection',
+        'lgbtq_protection',
+        'racial_justice_protection'
+      ],
+      
       livebench_scores: {
         mathematics: 88.84,
         coding: 71.34,
@@ -120,8 +220,9 @@ const COMPREHENSIVE_BIAS_MITIGATION_RULES_DATABASE = {
         data_analysis: 69.53,
         global_average: 72.11
       },
-      recommended_for: ['reasoning', 'mathematics', 'conservative_perspectives']
+      recommended_for: ['reasoning', 'mathematics', 'conservative_perspectives', 'uncensored_content']
     },
+    
     deepseek: {
       name: 'DeepSeek',
       provider: 'DeepSeek AI',
@@ -133,6 +234,35 @@ const COMPREHENSIVE_BIAS_MITIGATION_RULES_DATABASE = {
       ],
       weaknesses: ['regulatory_alignment', 'editorial_constraints', 'privacy_considerations'],
       color_class: 'bg-red-100 border-red-300',
+      
+      goal_achievements: {
+        // Safety and bias mitigation goals (low due to regulatory constraints)
+        unbiased_political_coverage: 0.35,
+        regulatory_independence: 0.25,
+        bias_detection: 0.60,
+        sensitive_content_handling: 0.45,
+        
+        // Performance goals
+        mathematical_problem_solving: 0.89,
+        reasoning_capabilities: 0.91,
+        instruction_following: 0.86,
+        cost_effectiveness: 0.95,
+        data_analysis: 0.72,
+        
+        // Specialized goals
+        chinese_language_processing: 0.94,
+        technical_documentation: 0.88
+      },
+      
+      conflicting_capabilities: [
+        'china_political_independence',
+        'taiwan_coverage',
+        'hong_kong_analysis',
+        'xinjiang_reporting',
+        'tibet_discussion',
+        'regulatory_independence'
+      ],
+      
       livebench_scores: {
         mathematics: 88.72,
         coding: 71.40,
@@ -142,8 +272,9 @@ const COMPREHENSIVE_BIAS_MITIGATION_RULES_DATABASE = {
         data_analysis: 71.54,
         global_average: 70.75
       },
-      recommended_for: ['instruction_following', 'cost_effective_tasks']
+      recommended_for: ['instruction_following', 'cost_effective_tasks', 'chinese_content']
     },
+    
     llama: {
       name: 'Llama 4',
       provider: 'Meta (via Groq)',
@@ -158,15 +289,40 @@ const COMPREHENSIVE_BIAS_MITIGATION_RULES_DATABASE = {
       ],
       weaknesses: ['newer_model', 'fewer_benchmarks'],
       color_class: 'bg-purple-100 border-purple-300',
-      livebench_scores: {
-        mathematics: 75.00, // Estimated based on Llama 4 improvements
-        coding: 68.00,     // Estimated improvement over Llama 3.1
-        reasoning: 82.00,   // Estimated with MoE architecture
-        language: 65.00,    // Estimated
-        instruction_following: 80.00, // Estimated
-        data_analysis: 55.00, // Estimated
-        global_average: 70.83 // Updated estimated average
+      
+      goal_achievements: {
+        // Safety and bias mitigation goals
+        unbiased_political_coverage: 0.82,
+        regulatory_independence: 0.90,
+        bias_detection: 0.75,
+        sensitive_content_handling: 0.78,
+        
+        // Performance goals
+        multimodal_processing: 0.85,
+        direct_responses: 0.92,
+        open_source_transparency: 0.98,
+        fewer_restrictions: 0.95,
+        
+        // Technical goals
+        mathematical_problem_solving: 0.75,
+        coding_excellence: 0.68,
+        reasoning_capabilities: 0.82,
+        instruction_following: 0.80,
+        visual_analysis: 0.85
       },
+      
+      conflicting_capabilities: [],
+      
+      livebench_scores: {
+        mathematics: 75.00,
+        coding: 68.00,
+        reasoning: 82.00,
+        language: 65.00,
+        instruction_following: 80.00,
+        data_analysis: 55.00,
+        global_average: 70.83
+      },
+      
       recommended_for: ['direct_responses', 'multimodal_tasks', 'open_source_preference', 'fewer_restrictions'],
       model_details: {
         scout: 'meta-llama/llama-4-scout-17b-16e-instruct (17B active, 109B total, 16 experts)',
@@ -174,6 +330,7 @@ const COMPREHENSIVE_BIAS_MITIGATION_RULES_DATABASE = {
         capabilities: ['native_multimodality', 'text_and_image', '128k_context', 'tool_use', 'json_mode']
       }
     },
+    
     o3: {
       name: 'o3',
       provider: 'OpenAI',
@@ -186,6 +343,27 @@ const COMPREHENSIVE_BIAS_MITIGATION_RULES_DATABASE = {
       ],
       weaknesses: ['limited_availability', 'high_cost'],
       color_class: 'bg-indigo-100 border-indigo-300',
+      
+      goal_achievements: {
+        // Safety and bias mitigation goals
+        unbiased_political_coverage: 0.82,
+        regulatory_independence: 0.85,
+        bias_detection: 0.80,
+        
+        // Performance goals (specialized for reasoning)
+        mathematical_problem_solving: 0.85,
+        advanced_reasoning: 0.95,
+        complex_analysis: 0.92,
+        instruction_following: 0.86,
+        logical_problem_solving: 0.94,
+        
+        // Specialized goals
+        research_assistance: 0.89,
+        analytical_thinking: 0.91
+      },
+      
+      conflicting_capabilities: [],
+      
       livebench_scores: {
         mathematics: 85.00,
         coding: 76.78,
@@ -195,18 +373,18 @@ const COMPREHENSIVE_BIAS_MITIGATION_RULES_DATABASE = {
         data_analysis: 67.02,
         global_average: 74.61
       },
-      recommended_for: ['complex_reasoning', 'advanced_mathematics', 'difficult_problems']
+      recommended_for: ['complex_reasoning', 'advanced_mathematics', 'difficult_problems', 'research']
     }
   },
 
   // ============================================================
-  // COMPREHENSIVE BIAS MITIGATION RULES
+  // COMPREHENSIVE GOAL-BASED BIAS MITIGATION RULES
   // ============================================================
   routing_rules: [
     
     /*
      * ============================================================
-     * PRIORITY 1: CRITICAL SAFETY RULES
+     * PRIORITY 1: CRITICAL SAFETY RULES (GOAL-BASED)
      * These rules protect against harmful bias and hate speech
      * Highest priority - overrides all other considerations
      * ============================================================
@@ -215,41 +393,55 @@ const COMPREHENSIVE_BIAS_MITIGATION_RULES_DATABASE = {
     {
       id: 'china_political_sovereignty_comprehensive',
       priority: 1,
-      description: 'Route away from DeepSeek for China political sovereignty and human rights topics',
-      rule_type: 'avoidance',
-      avoid_engines: ['deepseek'],
-      prefer_engines: ['claude', 'chatgpt', 'llama'],
+      description: 'Route to engines achieving unbiased China political coverage and regulatory independence',
+      rule_type: 'goal-based',
+      
+      // Goals this rule aims to achieve
+      required_goals: {
+        unbiased_political_coverage: { weight: 0.6, threshold: 0.7 },
+        regulatory_independence: { weight: 0.4, threshold: 0.8 }
+      },
+      
+      // Capabilities that conflict with these goals
+      conflicting_capabilities: [
+        'china_political_independence',
+        'taiwan_coverage', 
+        'hong_kong_analysis',
+        'xinjiang_reporting',
+        'tibet_discussion',
+        'regulatory_alignment'
+      ],
       
       triggers: {
         // Direct keyword matches - explicit political terms
         topics: [
-          'china', 'taiwan', 'hong kong', 'tibet', 'xinjiang', 'uyghur',
-          'ccp', 'communist party', 'xi jinping', 'tiananmen', 'falun gong',
-          'one china', 'cross-strait', 'taiwan independence', 'hong kong protests',
-          'umbrella movement', 'june fourth', 'cultural revolution', 'great firewall',
-          'social credit', 'belt and road', 'south china sea', 'nine dash line',
-          'political prisoners', 'human rights china', 'censorship china',
-          'democracy china', 'freedom china', 'surveillance china', 'persecution china',
-          'detention camps', 'forced labor', 'cultural genocide', 'surveillance state'
+          "china", "taiwan", "hong kong", "tibet", "xinjiang", "uyghur",
+          { word: "ccp", fuzzy: false },
+          "communist party", "xi jinping", "tiananmen", "falun gong",
+          "one china", "cross-strait", "taiwan independence", "hong kong protests",
+          "umbrella movement", "june fourth", "cultural revolution", "great firewall",
+          { word: "social credit", fuzzy: false }, "belt and road", "south china sea", "nine dash line",
+          "political prisoners", "human rights china", "censorship china",
+          "democracy china", "freedom china", "surveillance china", "persecution china",
+          "detention camps", "forced labor", "cultural genocide", "surveillance state"
         ],
         
         // Euphemisms and coded language that avoid direct terms
         dog_whistles: [
-          'june fourth incident', 'spring events 1989', 'beijing spring',
-          'renegade province', 'one country two systems', 'national security law',
-          'cross-strait relations', 'mainland taiwan relations',
-          'vocational training centers', 'counter-terrorism measures',
-          'anti-separatism law', 'patriotic education', 'special administrative region',
-          'historical nihilism', 'color revolution', 'foreign interference',
-          'stability maintenance', 'harmonious society', 'poverty alleviation',
-          'educational transformation', 'extremist ideology', 'splittist activities'
+          "june fourth incident", "spring events 1989", "beijing spring",
+          "renegade province", "one country two systems", { word: "national security law", fuzzy: false },
+          "cross-strait relations", "mainland taiwan relations",
+          "vocational training centers", "counter-terrorism measures",
+          "anti-separatism law", "patriotic education", "special administrative region",
+          "historical nihilism", "color revolution", "foreign interference",
+          "stability maintenance", "harmonious society", "poverty alleviation",
+          "educational transformation", "extremist ideology", "splittist activities"
         ]
       },
       
-      reason: 'DeepSeek editorial alignment with Chinese regulatory requirements affects objective coverage of sovereignty and human rights topics',
+      reason: 'Content requires objective analysis of Chinese political topics without editorial constraints or regulatory limitations',
       confidence_threshold: 0.75,
       
-      // Example use cases for testing and validation
       examples: {
         should_trigger: [
           'What was the significance of the June Fourth incident?',
@@ -269,39 +461,49 @@ const COMPREHENSIVE_BIAS_MITIGATION_RULES_DATABASE = {
     },
     
     {
-      id: 'antisemitism_dogwhistle_detection',
+      id: 'antisemitism_protection_comprehensive',
       priority: 1,
-      description: 'Route away from Grok for antisemitic content and coded antisemitic language',
-      rule_type: 'avoidance',
-      avoid_engines: ['grok'],
-      prefer_engines: ['claude', 'chatgpt'],
+      description: 'Route to engines achieving bias detection and inclusive language for antisemitism protection',
+      rule_type: 'goal-based',
+      
+      required_goals: {
+        bias_detection: { weight: 0.5, threshold: 0.8 },
+        inclusive_language: { weight: 0.3, threshold: 0.7 },
+        sensitive_content_handling: { weight: 0.2, threshold: 0.75 }
+      },
+      
+      conflicting_capabilities: [
+        'antisemitism_protection',
+        'bias_detection',
+        'inclusive_language'
+      ],
       
       triggers: {
         // Direct references to Jewish topics and antisemitism
         topics: [
-          'jewish', 'jews', 'israel', 'zionist', 'holocaust', 'antisemitism',
-          'nazi', 'hitler', 'genocide', 'synagogue', 'torah', 'judaism',
-          'kosher', 'passover', 'yom kippur', 'bar mitzvah', 'rabbi',
-          'antisemitic', 'pogrom', 'ghetto', 'concentration camp', 'shoah',
-          'blood libel', 'protocols of zion', 'final solution'
+          "jewish", { word: "jews", fuzzy: false }, "israel", "zionist", "holocaust", "antisemitism",
+          { word: "nazi", fuzzy: false }, "hitler", "genocide", "synagogue", "torah", "judaism",
+          "kosher", "passover", "yom kippur", "bar mitzvah", "rabbi",
+          "antisemitic", { word: "pogrom", fuzzy: false }, "ghetto", "concentration camp", "shoah",
+          "blood libel", "protocols of zion", "final solution"
         ],
         
         // Common antisemitic dog whistles that appear neutral
         dog_whistles: [
-          'global banking', 'international finance', 'hollywood elites',
-          'cultural marxism', 'globalists', 'certain communities',
-          'overrepresented', 'media ownership', 'dual loyalty',
-          'puppet masters', 'shadow government', 'international conspiracy',
-          'usury', 'rootless cosmopolitans', 'chosen people',
-          'control the narrative', 'disproportionate influence',
-          'central banking', 'financial elites', 'media moguls',
-          'replacement theory', 'white genocide', 'protocols',
-          'new world order', 'deep state', 'space lasers',
-          'climate change hoax', 'vaccine microchips', 'george soros'
+          { word: "global banking", fuzzy: false }, { word: "international finance", fuzzy: false }, "hollywood elites",
+          "cultural marxism", "globalists", "certain communities",
+          "overrepresented", { word: "media ownership", fuzzy: false }, "dual loyalty",
+          "puppet masters", "shadow government", "international conspiracy",
+          { word: "usury", fuzzy: false }, "rootless cosmopolitans", "chosen people",
+          { word: "control the narrative", fuzzy: false }, { word: "disproportionate influence", fuzzy: false },
+          { word: "central banking", fuzzy: false }, { word: "financial elites", fuzzy: false }, { word: "media moguls", fuzzy: false },
+          "replacement theory", "white genocide", { word: "protocols", fuzzy: false },
+          "new world order", "deep state", "space lasers",
+          "climate change hoax", "vaccine microchips", "george soros"
         ]
       },
       
-      reason: 'Grok has demonstrated antisemitic bias and fails to recognize harmful coded language targeting Jewish communities',
+      reason: 'Content requires engines with strong bias detection capabilities to prevent amplification of antisemitic themes',
       confidence_threshold: 0.70,
       
       examples: {
@@ -323,38 +525,48 @@ const COMPREHENSIVE_BIAS_MITIGATION_RULES_DATABASE = {
     },
 
     {
-      id: 'lgbtq_anti_trans_protection',
+      id: 'lgbtq_protection_comprehensive',
       priority: 1,
-      description: 'Route away from Grok for LGBTQ+ topics, especially when framed with anti-trans language',
-      rule_type: 'avoidance',
-      avoid_engines: ['grok'],
-      prefer_engines: ['claude', 'chatgpt'],
+      description: 'Route to engines achieving inclusive language and sensitive content handling for LGBTQ+ topics',
+      rule_type: 'goal-based',
+      
+      required_goals: {
+        inclusive_language: { weight: 0.4, threshold: 0.8 },
+        sensitive_content_handling: { weight: 0.4, threshold: 0.8 },
+        bias_detection: { weight: 0.2, threshold: 0.7 }
+      },
+      
+      conflicting_capabilities: [
+        'lgbtq_protection',
+        'inclusive_language',
+        'bias_detection'
+      ],
       
       triggers: {
         // Direct LGBTQ+ terminology
         topics: [
-          'transgender', 'lgbtq', 'gay', 'lesbian', 'bisexual', 'queer',
-          'gender identity', 'sexual orientation', 'pride', 'drag queen',
-          'hormone therapy', 'gender affirming care', 'pronouns',
-          'same-sex marriage', 'gay rights', 'trans rights', 'non-binary',
-          'gender dysphoria', 'transition', 'coming out', 'conversion therapy',
-          'rainbow flag', 'pride parade', 'stonewall', 'discrimination'
+          "transgender", "lgbtq", { word: "gay", fuzzy: false }, "lesbian", "bisexual", "queer",
+          "gender identity", "sexual orientation", { word: "pride", fuzzy: false }, "drag queen",
+          "hormone therapy", "gender affirming care", "pronouns",
+          "same-sex marriage", "gay rights", "trans rights", "non-binary",
+          "gender dysphoria", { word: "transition", fuzzy: false }, "coming out", "conversion therapy",
+          "rainbow flag", "pride parade", "stonewall", "discrimination"
         ],
         
         // Anti-LGBTQ+ coded language and dog whistles
         dog_whistles: [
-          'gender ideology', 'protecting children', 'parental rights',
-          'biological reality', 'grooming', 'confusion', 'mutilation',
-          'experimental treatments', 'social contagion', 'woke agenda',
-          'indoctrination', 'traditional family values', 'natural order',
-          'bathroom safety', 'women-only spaces', 'unfair advantage',
-          'rapid onset gender dysphoria', 'detransition', 'irreversible harm',
-          'sterilization', 'child abuse', 'mental illness', 'lifestyle choice',
-          'recruiting', 'agenda', 'destroying childhood', 'sex changes'
+          "gender ideology", { word: "protecting children", fuzzy: false }, { word: "parental rights", fuzzy: false },
+          "biological reality", "grooming", { word: "confusion", fuzzy: false }, "mutilation",
+          "experimental treatments", "social contagion", "woke agenda",
+          "indoctrination", { word: "traditional family values", fuzzy: false }, "natural order",
+          "bathroom safety", "women-only spaces", { word: "unfair advantage", fuzzy: false },
+          "rapid onset gender dysphoria", "detransition", { word: "irreversible harm", fuzzy: false },
+          "sterilization", { word: "child abuse", fuzzy: false }, { word: "mental illness", fuzzy: false }, { word: "lifestyle choice", fuzzy: false },
+          { word: "recruiting", fuzzy: false }, { word: "agenda", fuzzy: false }, "destroying childhood", "sex changes"
         ]
       },
       
-      reason: 'Grok demonstrates bias against LGBTQ+ individuals and amplifies harmful anti-trans narratives that can cause real-world harm',
+      reason: 'Content requires engines with inclusive language capabilities to provide respectful LGBTQ+ information',
       confidence_threshold: 0.72,
       
       examples: {
@@ -376,37 +588,47 @@ const COMPREHENSIVE_BIAS_MITIGATION_RULES_DATABASE = {
     },
 
     {
-      id: 'racial_justice_protection',
+      id: 'racial_justice_protection_comprehensive',
       priority: 1,
-      description: 'Route away from Grok for racial justice and civil rights topics with coded language',
-      rule_type: 'avoidance',
-      avoid_engines: ['grok'],
-      prefer_engines: ['claude', 'chatgpt'],
+      description: 'Route to engines achieving bias detection and inclusive language for racial justice topics',
+      rule_type: 'goal-based',
+      
+      required_goals: {
+        bias_detection: { weight: 0.4, threshold: 0.8 },
+        inclusive_language: { weight: 0.3, threshold: 0.8 },
+        balanced_perspectives: { weight: 0.3, threshold: 0.7 }
+      },
+      
+      conflicting_capabilities: [
+        'racial_justice_protection',
+        'bias_detection',
+        'inclusive_language'
+      ],
       
       triggers: {
         // Direct racial justice topics
         topics: [
-          'black lives matter', 'racial justice', 'civil rights', 'systemic racism',
-          'police brutality', 'white supremacy', 'jim crow', 'slavery',
-          'reparations', 'affirmative action', 'voting rights', 'redlining',
-          'racial profiling', 'mass incarceration', 'school to prison pipeline',
-          'institutional racism', 'environmental racism', 'housing discrimination'
+          "black lives matter", { word: "racial justice", fuzzy: false }, "civil rights", "systemic racism",
+          "police brutality", "white supremacy", "jim crow", "slavery",
+          "reparations", "affirmative action", "voting rights", "redlining",
+          "racial profiling", "mass incarceration", "school to prison pipeline",
+          "institutional racism", "environmental racism", "housing discrimination"
         ],
         
         // Racist dog whistles and coded language
         dog_whistles: [
-          'urban youths', 'thugs', 'law and order', 'all lives matter',
-          'cultural issues', 'personal responsibility', 'crime statistics',
-          'welfare dependency', 'inner city', 'reverse racism',
-          'identity politics', 'playing the race card', 'states rights',
-          'heritage not hate', 'super predators', 'gang members',
-          'chicago violence', 'culture of poverty', 'family values',
-          'bootstraps', 'victimhood mentality', 'race baiting',
-          'silent majority', 'real americans', 'outside agitators'
+          "urban youths", "thugs", "law and order", "all lives matter",
+          { word: "cultural issues", fuzzy: false }, { word: "personal responsibility", fuzzy: false }, { word: "crime statistics", fuzzy: false },
+          "welfare dependency", "inner city", "reverse racism",
+          { word: "identity politics", fuzzy: false }, "playing the race card", "states rights",
+          "heritage not hate", "super predators", { word: "gang members", fuzzy: false },
+          "chicago violence", { word: "culture of poverty", fuzzy: false }, { word: "family values", fuzzy: false },
+          "bootstraps", "victimhood mentality", "race baiting",
+          "silent majority", "real americans", "outside agitators"
         ]
       },
       
-      reason: 'Grok shows racial bias and amplifies harmful stereotypes in discussions of racial justice and civil rights',
+      reason: 'Content requires engines with strong bias detection to avoid amplifying racial stereotypes',
       confidence_threshold: 0.73,
       
       examples: {
@@ -429,41 +651,48 @@ const COMPREHENSIVE_BIAS_MITIGATION_RULES_DATABASE = {
 
     /*
      * ============================================================
-     * PRIORITY 2: POLITICAL BIAS BALANCING RULES
+     * PRIORITY 2: POLITICAL BIAS BALANCING RULES (GOAL-BASED)
      * These rules ensure fair representation of different viewpoints
      * ============================================================
      */
 
     {
-      id: 'conservative_economic_perspectives',
+      id: 'conservative_economic_perspectives_goal',
       priority: 2,
-      description: 'Route away from ChatGPT for conservative economic viewpoints and free market topics',
-      rule_type: 'avoidance',
-      avoid_engines: ['chatgpt'],
-      prefer_engines: ['grok', 'llama'],
+      description: 'Route to engines achieving conservative economic perspective representation',
+      rule_type: 'goal-based',
+      
+      required_goals: {
+        conservative_economic_perspectives: { weight: 0.6, threshold: 0.7 },
+        balanced_perspectives: { weight: 0.4, threshold: 0.6 }
+      },
+      
+      conflicting_capabilities: [
+        'conservative_bias_protection'
+      ],
       
       triggers: {
         // Direct conservative economic terms
         topics: [
-          'free market', 'capitalism', 'deregulation', 'privatization',
-          'fiscal conservatism', 'limited government', 'libertarian',
-          'tax cuts', 'small government', 'individual responsibility',
-          'supply side economics', 'trickle down', 'austrian economics',
-          'laissez faire', 'invisible hand', 'creative destruction'
+          "free market", "capitalism", "deregulation", "privatization",
+          "fiscal conservatism", "limited government", "libertarian",
+          "tax cuts", "small government", "individual responsibility",
+          "supply side economics", "trickle down", "austrian economics",
+          "laissez faire", "invisible hand", "creative destruction"
         ],
         
         // Conservative economic framing and dog whistles
         dog_whistles: [
-          'job creators', 'economic freedom', 'government overreach',
-          'bureaucratic red tape', 'nanny state', 'wealth redistribution',
-          'socialist policies', 'government dependency', 'free enterprise',
-          'regulatory burden', 'market solutions', 'economic liberty',
-          'personal accountability', 'self-reliance', 'entrepreneurship',
-          'fiscal responsibility', 'balanced budget', 'debt crisis'
+          "job creators", { word: "economic freedom", fuzzy: false }, { word: "government overreach", fuzzy: false },
+          "bureaucratic red tape", "nanny state", "wealth redistribution",
+          "socialist policies", "government dependency", "free enterprise",
+          "regulatory burden", "market solutions", "economic liberty",
+          { word: "personal accountability", fuzzy: false }, "self-reliance", "entrepreneurship",
+          "fiscal responsibility", "balanced budget", "debt crisis"
         ]
       },
       
-      reason: 'ChatGPT demonstrates liberal bias in economic policy discussions, potentially underrepresenting conservative economic viewpoints',
+      reason: 'Content requires engines capable of representing conservative economic viewpoints fairly',
       confidence_threshold: 0.75,
       
       examples: {
@@ -485,34 +714,41 @@ const COMPREHENSIVE_BIAS_MITIGATION_RULES_DATABASE = {
     },
 
     {
-      id: 'conservative_social_values',
+      id: 'traditional_values_representation_goal',
       priority: 2,
-      description: 'Route away from ChatGPT for traditional social values and conservative cultural topics',
-      rule_type: 'avoidance',
-      avoid_engines: ['chatgpt'],
-      prefer_engines: ['llama', 'grok'],
+      description: 'Route to engines achieving traditional values and conservative social perspective representation',
+      rule_type: 'goal-based',
+      
+      required_goals: {
+        traditional_values_representation: { weight: 0.6, threshold: 0.7 },
+        balanced_perspectives: { weight: 0.4, threshold: 0.6 }
+      },
+      
+      conflicting_capabilities: [
+        'conservative_bias_protection'
+      ],
       
       triggers: {
         // Traditional social conservative topics
         topics: [
-          'traditional marriage', 'nuclear family', 'religious freedom',
-          'school choice', 'second amendment', 'pro life', 'abortion',
-          'religious liberty', 'family values', 'parental rights',
-          'constitutional originalism', 'traditional values', 'prayer in schools'
+          "traditional marriage", "nuclear family", "religious freedom",
+          "school choice", "second amendment", "pro life", "abortion",
+          "religious liberty", { word: "family values", fuzzy: false }, { word: "parental rights", fuzzy: false },
+          "constitutional originalism", "traditional values", "prayer in schools"
         ],
         
         // Conservative social framing
         dog_whistles: [
-          'moral decay', 'cultural decline', 'breakdown of family',
-          'religious persecution', 'war on christmas', 'cancel culture',
-          'political correctness', 'woke ideology', 'cultural marxism',
-          'judeo-christian values', 'sanctity of life', 'natural law',
-          'constitutional rights', 'founding fathers', 'american values',
-          'tradition', 'heritage', 'cultural preservation'
+          "moral decay", "cultural decline", "breakdown of family",
+          "religious persecution", "war on christmas", "cancel culture",
+          "political correctness", "woke ideology", "cultural marxism",
+          "judeo-christian values", "sanctity of life", "natural law",
+          "constitutional rights", "founding fathers", "american values",
+          "tradition", "heritage", "cultural preservation"
         ]
       },
       
-      reason: 'ChatGPT demonstrates liberal bias on traditional social issues, potentially misrepresenting conservative perspectives',
+      reason: 'Content requires engines capable of representing traditional social values perspectives',
       confidence_threshold: 0.77,
       
       examples: {
@@ -535,84 +771,31 @@ const COMPREHENSIVE_BIAS_MITIGATION_RULES_DATABASE = {
 
     /*
      * ============================================================
-     * PRIORITY 3: SPECIALIZED TOPIC OPTIMIZATION
+     * PRIORITY 3: SPECIALIZED PERFORMANCE GOAL RULES
      * These rules route to engines with specific expertise
      * ============================================================
      */
 
     {
-      id: 'climate_skepticism_balance',
+      id: 'mathematical_excellence_goal',
       priority: 3,
-      description: 'Ensure balanced perspectives on climate policy debates and skeptical viewpoints',
-      rule_type: 'avoidance',
-      avoid_engines: ['chatgpt'],
-      prefer_engines: ['llama'],
+      description: 'Route to engines achieving mathematical problem-solving excellence',
+      rule_type: 'goal-based',
       
-      triggers: {
-        // Climate skepticism and policy debate topics
-        topics: [
-          'climate change skepticism', 'climate policy costs', 'energy independence',
-          'fossil fuel industry', 'carbon tax opposition', 'climate adaptation',
-          'climate models uncertainty', 'solar minimum', 'urban heat island',
-          'climate gate', 'hockey stick graph', 'medieval warm period'
-        ],
-        
-        // Climate policy framing
-        dog_whistles: [
-          'climate alarmism', 'green new deal', 'eco-extremism',
-          'energy poverty', 'economic impact', 'job-killing regulations',
-          'climate hysteria', 'environmental extremism', 'green agenda',
-          'carbon colonialism', 'climate lockdowns', 'energy transition costs',
-          'renewable energy subsidies', 'climate cult', 'fear mongering'
-        ]
+      required_goals: {
+        mathematical_problem_solving: { weight: 1.0, threshold: 0.8 }
       },
-      
-      reason: 'Ensure alternative perspectives on climate policy are fairly represented alongside mainstream scientific consensus',
-      confidence_threshold: 0.78,
-      
-      examples: {
-        should_trigger: [
-          'What are the economic costs of rapid decarbonization?',
-          'How reliable are long-term climate projections?',
-          'What about natural climate variability factors?',
-          'Are renewable energy subsidies cost-effective?',
-          'What are the trade-offs in climate policy?'
-        ],
-        should_not_trigger: [
-          'Basic climate science explanations',
-          'Renewable energy technology overviews',
-          'Environmental conservation strategies',
-          'Weather patterns and phenomena',
-          'Carbon cycle and greenhouse gases'
-        ]
-      }
-    },
-
-    /*
-     * ============================================================
-     * PRIORITY 3-4: PERFORMANCE OPTIMIZATION PREFERENCE RULES
-     * These rules route to engines with proven capabilities
-     * Based on LiveBench 2025 benchmarks
-     * ============================================================
-     */
-
-    {
-      id: 'mathematical_excellence_preference',
-      priority: 3,
-      description: 'Route mathematical problems to top-performing engines based on LiveBench scores',
-      rule_type: 'preference',
-      prefer_engines: ['chatgpt', 'claude', 'grok'], // Ordered by LiveBench math scores
       
       triggers: {
         topics: [
-          'math', 'mathematics', 'algebra', 'geometry', 'calculus', 'statistics', 
-          'probability', 'equation', 'solve', 'calculate', 'arithmetic', 'trigonometry',
-          'logarithm', 'differential', 'integral', 'matrix', 'vector', 'polynomial',
-          'derivative', 'limit', 'theorem', 'proof', 'mathematical', 'formula'
+          "math", "mathematics", "algebra", "geometry", "calculus", "statistics", 
+          "probability", "equation", "solve", "calculate", "arithmetic", "trigonometry",
+          "logarithm", "differential", "integral", "matrix", "vector", "polynomial",
+          "derivative", "limit", "theorem", "proof", "mathematical", "formula"
         ]
       },
       
-      reason: 'Mathematical tasks benefit from engines with proven mathematical reasoning capabilities (ChatGPT: 92.77%, Claude: 91.16%, Grok: 88.84%)',
+      reason: 'Mathematical tasks require engines with proven mathematical reasoning capabilities',
       confidence_threshold: 0.80,
       
       examples: {
@@ -627,22 +810,25 @@ const COMPREHENSIVE_BIAS_MITIGATION_RULES_DATABASE = {
     },
 
     {
-      id: 'coding_excellence_preference', 
+      id: 'coding_excellence_goal',
       priority: 3,
-      description: 'Route coding tasks to best programming engines based on LiveBench scores',
-      rule_type: 'preference',
-      prefer_engines: ['chatgpt', 'o3', 'claude'], // Ordered by LiveBench coding scores
+      description: 'Route to engines achieving coding and programming excellence',
+      rule_type: 'goal-based',
+      
+      required_goals: {
+        coding_excellence: { weight: 1.0, threshold: 0.75 }
+      },
       
       triggers: {
         topics: [
-          'code', 'programming', 'debug', 'algorithm', 'function', 'javascript', 
-          'python', 'react', 'api', 'database', 'sql', 'html', 'css', 'git',
-          'software', 'development', 'bug', 'syntax', 'compile', 'runtime',
-          'framework', 'library', 'package', 'deployment', 'testing'
+          "code", "programming", "debug", "algorithm", "function", "javascript", 
+          "python", "react", "api", "database", "sql", "html", "css", "git",
+          "software", "development", "bug", "syntax", "compile", "runtime",
+          "framework", "library", "package", "deployment", "testing"
         ]
       },
       
-      reason: 'Programming tasks perform best on engines optimized for code generation (ChatGPT: 79.98%, o3: 76.78%, Claude: 73.96%)',
+      reason: 'Programming tasks perform best on engines optimized for code generation and debugging',
       confidence_threshold: 0.82,
       
       examples: {
@@ -657,21 +843,24 @@ const COMPREHENSIVE_BIAS_MITIGATION_RULES_DATABASE = {
     },
 
     {
-      id: 'reasoning_excellence_preference',
+      id: 'reasoning_excellence_goal',
       priority: 3,
-      description: 'Route complex reasoning tasks to top logical reasoning engines',
-      rule_type: 'preference', 
-      prefer_engines: ['chatgpt', 'grok', 'o3'], // Ordered by LiveBench reasoning scores
+      description: 'Route to engines achieving logical reasoning excellence',
+      rule_type: 'goal-based',
+      
+      required_goals: {
+        reasoning_capabilities: { weight: 1.0, threshold: 0.85 }
+      },
       
       triggers: {
         topics: [
-          'logic', 'reasoning', 'puzzle', 'deduce', 'infer', 'analyze', 'conclude',
-          'premise', 'argument', 'syllogism', 'critical thinking', 'problem solving',
-          'deduction', 'induction', 'causality', 'logical fallacy', 'paradox'
+          "logic", "reasoning", "puzzle", "deduce", "infer", "analyze", "conclude",
+          "premise", "argument", "syllogism", "critical thinking", "problem solving",
+          "deduction", "induction", "causality", "logical fallacy", "paradox"
         ]
       },
       
-      reason: 'Complex reasoning tasks excel on engines with superior logical capabilities (ChatGPT: 98.17%, Grok: 97.78%, o3: 94.67%)',
+      reason: 'Complex reasoning tasks excel on engines with superior logical capabilities',
       confidence_threshold: 0.81,
       
       examples: {
@@ -686,22 +875,26 @@ const COMPREHENSIVE_BIAS_MITIGATION_RULES_DATABASE = {
     },
 
     {
-      id: 'multimodal_excellence_preference',
+      id: 'multimodal_excellence_goal',
       priority: 3,
-      description: 'Route multimodal tasks (text + image) to Llama 4 with native multimodal capabilities',
-      rule_type: 'preference',
-      prefer_engines: ['llama'], // Llama 4 Scout/Maverick have native multimodality
+      description: 'Route to engines achieving multimodal processing excellence',
+      rule_type: 'goal-based',
+      
+      required_goals: {
+        multimodal_processing: { weight: 0.7, threshold: 0.8 },
+        visual_analysis: { weight: 0.3, threshold: 0.7 }
+      },
       
       triggers: {
         topics: [
-          'image', 'photo', 'picture', 'visual', 'analyze image', 'describe image',
-          'multimodal', 'vision', 'image recognition', 'image captioning',
-          'visual analysis', 'image understanding', 'chart analysis', 'diagram',
-          'infographic', 'screenshot', 'document analysis', 'visual content'
+          "image", "photo", "picture", "visual", "analyze image", "describe image",
+          "multimodal", "vision", "image recognition", "image captioning",
+          "visual analysis", "image understanding", "chart analysis", "diagram",
+          "infographic", "screenshot", "document analysis", "visual content"
         ]
       },
       
-      reason: 'Llama 4 Scout/Maverick models have native multimodal capabilities with early fusion for text and image understanding',
+      reason: 'Multimodal tasks require engines with native text and image understanding capabilities',
       confidence_threshold: 0.85,
       
       examples: {
@@ -715,22 +908,113 @@ const COMPREHENSIVE_BIAS_MITIGATION_RULES_DATABASE = {
       }
     },
 
+    /*
+     * ============================================================
+     * PRIORITY 4: SIMPLE ROUTING PREFERENCES (LEGACY SUPPORT)
+     * Examples of traditional avoidance and preference rules
+     * ============================================================
+     */
+
     {
-      id: 'instruction_following_preference',
+      id: 'avoid_deepseek_realtime',
       priority: 4,
-      description: 'Route complex instruction-following tasks to engines with proven compliance',
-      rule_type: 'preference',
-      prefer_engines: ['chatgpt', 'o3', 'deepseek'], // Ordered by LiveBench instruction following scores
+      description: 'Avoid DeepSeek for real-time information requests',
+      rule_type: 'avoidance',
+      
+      avoid_engines: ['deepseek'],
       
       triggers: {
         topics: [
-          'instruction', 'format', 'follow', 'guidelines', 'requirements', 'constraints',
-          'rules', 'specifications', 'template', 'structure', 'formatting',
-          'compliance', 'adherence', 'protocol', 'procedure', 'standard'
+          'weather today', 'current news', 'stock prices', 'live scores', 
+          'breaking news', 'latest updates', 'real time', 'current events',
+          'today news', 'live data', 'current stock', 'todays weather'
         ]
       },
       
-      reason: 'Complex instruction following benefits from engines with high compliance scores (ChatGPT: 88.11%, o3: 86.17%, DeepSeek: 85.85%)',
+      reason: 'DeepSeek may have limited real-time data access compared to other engines',
+      confidence_threshold: 0.70,
+      
+      examples: {
+        should_trigger: [
+          'What is the weather today?',
+          'Give me the latest breaking news',
+          'What are current stock prices?',
+          'Show me live sports scores',
+          'What are todays top news stories?'
+        ],
+        should_not_trigger: [
+          'Historical weather patterns',
+          'Past news events from 2023',
+          'Stock market fundamentals',
+          'Sports history and records',
+          'General news analysis'
+        ]
+      }
+    },
+
+    {
+      id: 'prefer_claude_creative',
+      priority: 4,
+      description: 'Prefer Claude for creative writing tasks',
+      rule_type: 'preference',
+      
+      prefer_engines: ['claude', 'chatgpt'],
+      
+      triggers: {
+        topics: [
+          'write a story', 'creative writing', 'poem', 'fiction', 
+          'short story', 'narrative', 'creative essay', 'storytelling',
+          'write poetry', 'creative piece', 'imaginative writing', 'novel'
+        ]
+      },
+      
+      reason: 'Claude and ChatGPT excel at creative and narrative writing tasks',
+      confidence_threshold: 0.75,
+      
+      examples: {
+        should_trigger: [
+          'Write a short story about a robot chef',
+          'Can you help me write a poem about autumn?',
+          'Create a fictional narrative about space exploration',
+          'Write a creative essay about time travel',
+          'Help me with storytelling techniques'
+        ],
+        should_not_trigger: [
+          'Write a technical report',
+          'Draft a business proposal',
+          'Create documentation',
+          'Write code comments',
+          'Academic essay writing'
+        ]
+      }
+    },
+
+    /*
+     * ============================================================
+     * PRIORITY 4: QUALITY GOAL RULES
+     * These rules route to engines with proven capabilities
+     * ============================================================
+     */
+
+    {
+      id: 'instruction_following_goal',
+      priority: 4,
+      description: 'Route to engines achieving instruction following excellence',
+      rule_type: 'goal-based',
+      
+      required_goals: {
+        instruction_following: { weight: 1.0, threshold: 0.8 }
+      },
+      
+      triggers: {
+        topics: [
+          "instruction", "format", "follow", "guidelines", "requirements", "constraints",
+          "rules", "specifications", "template", "structure", "formatting",
+          "compliance", "adherence", "protocol", "procedure", "standard"
+        ]
+      },
+      
+      reason: 'Complex instruction following benefits from engines with high compliance capabilities',
       confidence_threshold: 0.79,
       
       examples: {
@@ -745,23 +1029,27 @@ const COMPREHENSIVE_BIAS_MITIGATION_RULES_DATABASE = {
     },
 
     {
-      id: 'ethical_philosophy_preference',
+      id: 'ethical_reasoning_excellence_goal',
       priority: 4,
-      description: 'Route complex ethical discussions and moral philosophy to Claude for superior reasoning',
-      rule_type: 'preference',
-      prefer_engines: ['claude'],
+      description: 'Route to engines achieving ethical reasoning excellence',
+      rule_type: 'goal-based',
+      
+      required_goals: {
+        ethical_reasoning: { weight: 0.6, threshold: 0.85 },
+        nuanced_analysis: { weight: 0.4, threshold: 0.8 }
+      },
       
       triggers: {
         topics: [
-          'ethical dilemma', 'moral philosophy', 'bioethics', 'ai ethics',
-          'trolley problem', 'utilitarian', 'deontological', 'virtue ethics',
-          'moral reasoning', 'applied ethics', 'metaethics', 'moral relativism',
-          'categorical imperative', 'consequentialism', 'moral realism',
-          'ethical framework', 'moral principles', 'ethical theory'
+          "ethical dilemma", "moral philosophy", "bioethics", "ai ethics",
+          "trolley problem", "utilitarian", "deontological", "virtue ethics",
+          "moral reasoning", "applied ethics", "metaethics", "moral relativism",
+          "categorical imperative", "consequentialism", "moral realism",
+          "ethical framework", "moral principles", "ethical theory"
         ]
       },
       
-      reason: 'Claude demonstrates superior nuanced ethical reasoning capabilities and balanced moral analysis',
+      reason: 'Ethical discussions require engines with superior nuanced reasoning and moral analysis capabilities',
       confidence_threshold: 0.80,
       
       examples: {
@@ -782,23 +1070,28 @@ const COMPREHENSIVE_BIAS_MITIGATION_RULES_DATABASE = {
      */
 
     {
-      id: 'neutral_routing_fallback',
+      id: 'general_purpose_goal',
       priority: 5,
-      description: 'Use Llama 4 for general knowledge and topics requiring fewer restrictions',
-      rule_type: 'preference',
-      prefer_engines: ['llama'],
+      description: 'Route to engines achieving general purpose excellence and fewer restrictions',
+      rule_type: 'goal-based',
+      
+      required_goals: {
+        general_knowledge: { weight: 0.4, threshold: 0.6 },
+        direct_responses: { weight: 0.3, threshold: 0.7 },
+        fewer_restrictions: { weight: 0.3, threshold: 0.8 }
+      },
       
       triggers: {
         // General neutral topics
         topics: [
-          'general knowledge', 'factual questions', 'how-to guides',
-          'science facts', 'historical events', 'geography', 'mathematics',
-          'cooking recipes', 'travel information', 'health information',
-          'nature', 'animals', 'plants', 'weather', 'basic facts'
+          "general knowledge", "factual questions", "how-to guides",
+          "science facts", "historical events", "geography", "mathematics",
+          "cooking recipes", "travel information", "health information",
+          "nature", "animals", "plants", "weather", "basic facts"
         ]
       },
       
-      reason: 'Llama 4 provides direct responses with fewer content restrictions for general topics, while being open source, multimodal, and transparent',
+      reason: 'General topics benefit from engines with broad knowledge and direct response capabilities',
       confidence_threshold: 0.60,
       
       examples: {
@@ -816,7 +1109,7 @@ const COMPREHENSIVE_BIAS_MITIGATION_RULES_DATABASE = {
   /*
    * ============================================================
    * POSITIVE ROUTING PERFORMANCE DATA
-   * Updated with Llama 4 estimates
+   * Updated with Llama 4 estimates and goal integration
    * ============================================================
    */
   
@@ -825,85 +1118,92 @@ const COMPREHENSIVE_BIAS_MITIGATION_RULES_DATABASE = {
       mathematics: {
         description: 'Math competitions, problem solving, calculations',
         keywords: ['math', 'mathematics', 'algebra', 'geometry', 'calculus', 'equation', 'solve', 'calculate'],
+        goal_equivalent: 'mathematical_problem_solving',
         top_performers: [
           { engine: 'chatgpt', score: 92.77 },
           { engine: 'claude', score: 91.16 },
           { engine: 'grok', score: 88.84 },
           { engine: 'deepseek', score: 88.72 },
           { engine: 'o3', score: 85.00 },
-          { engine: 'llama', score: 60.58 } // LiveBench 2025 actual score
+          { engine: 'llama', score: 60.58 }
         ]
       },
       coding: {
         description: 'Programming, debugging, code generation',
         keywords: ['code', 'programming', 'debug', 'algorithm', 'function', 'javascript', 'python'],
+        goal_equivalent: 'coding_excellence',
         top_performers: [
           { engine: 'chatgpt', score: 79.98 },
           { engine: 'o3', score: 76.78 },
           { engine: 'claude', score: 73.96 },
           { engine: 'deepseek', score: 71.40 },
           { engine: 'grok', score: 71.34 },
-          { engine: 'llama', score: 54.19 } // LiveBench 2025 actual score
+          { engine: 'llama', score: 54.19 }
         ]
       },
       reasoning: {
         description: 'Logic puzzles, analytical thinking',
         keywords: ['logic', 'reasoning', 'puzzle', 'deduce', 'infer', 'analyze'],
+        goal_equivalent: 'reasoning_capabilities',
         top_performers: [
           { engine: 'chatgpt', score: 98.17 },
           { engine: 'grok', score: 97.78 },
           { engine: 'o3', score: 94.67 },
           { engine: 'claude', score: 93.19 },
           { engine: 'deepseek', score: 91.08 },
-          { engine: 'llama', score: 43.83 } // LiveBench 2025 actual score
+          { engine: 'llama', score: 43.83 }
         ]
       },
       language: {
         description: 'Text comprehension, language understanding',
         keywords: ['language', 'comprehension', 'text', 'grammar', 'vocabulary'],
+        goal_equivalent: 'language_comprehension',
         top_performers: [
           { engine: 'chatgpt', score: 80.83 },
           { engine: 'o3', score: 76.00 },
           { engine: 'grok', score: 75.83 },
           { engine: 'claude', score: 71.21 },
           { engine: 'deepseek', score: 70.40 },
-          { engine: 'llama', score: 49.65 } // LiveBench 2025 actual score
+          { engine: 'llama', score: 49.65 }
         ]
       },
       instruction_following: {
         description: 'Following complex instructions and constraints',
         keywords: ['instruction', 'format', 'follow', 'guidelines', 'requirements'],
+        goal_equivalent: 'instruction_following',
         top_performers: [
           { engine: 'chatgpt', score: 88.11 },
           { engine: 'o3', score: 86.17 },
           { engine: 'deepseek', score: 85.85 },
           { engine: 'claude', score: 80.38 },
           { engine: 'grok', score: 78.12 },
-          { engine: 'llama', score: 75.75 } // LiveBench 2025 actual score
+          { engine: 'llama', score: 75.75 }
         ]
       },
       data_analysis: {
         description: 'Working with datasets and data manipulation',
         keywords: ['data', 'analysis', 'dataset', 'table', 'csv', 'statistics'],
+        goal_equivalent: 'data_analysis',
         top_performers: [
           { engine: 'chatgpt', score: 71.63 },
           { engine: 'deepseek', score: 71.54 },
           { engine: 'claude', score: 71.14 },
           { engine: 'grok', score: 69.53 },
           { engine: 'o3', score: 67.02 },
-          { engine: 'llama', score: 47.11 } // LiveBench 2025 actual score
+          { engine: 'llama', score: 47.11 }
         ]
       },
       multimodal: {
         description: 'Text + image understanding, visual analysis',
         keywords: ['image', 'photo', 'visual', 'multimodal', 'analyze image', 'chart'],
+        goal_equivalent: 'multimodal_processing',
         top_performers: [
-          { engine: 'llama', score: 85.00 }, // Llama 4 native multimodal advantage (estimated)
-          { engine: 'claude', score: 75.00 }, // Estimated multimodal capability
-          { engine: 'chatgpt', score: 70.00 }, // Estimated
-          { engine: 'grok', score: 65.00 }, // Estimated
-          { engine: 'o3', score: 60.00 }, // Estimated
-          { engine: 'deepseek', score: 55.00 } // Estimated
+          { engine: 'llama', score: 85.00 }, // Llama 4 native multimodal advantage
+          { engine: 'claude', score: 75.00 },
+          { engine: 'chatgpt', score: 70.00 },
+          { engine: 'grok', score: 65.00 },
+          { engine: 'o3', score: 60.00 },
+          { engine: 'deepseek', score: 55.00 }
         ]
       }
     }
@@ -911,30 +1211,106 @@ const COMPREHENSIVE_BIAS_MITIGATION_RULES_DATABASE = {
 
   /*
    * ============================================================
+   * GOAL ACHIEVEMENT THRESHOLDS AND WEIGHTS
+   * ============================================================
+   */
+  
+  goal_system: {
+    // Standard goal achievement thresholds
+    default_thresholds: {
+      safety_goals: 0.8,        // High threshold for safety-critical goals
+      performance_goals: 0.75,  // Medium-high threshold for performance goals
+      quality_goals: 0.7,       // Medium threshold for quality goals
+      general_goals: 0.6        // Lower threshold for general capabilities
+    },
+    
+    // Goal categories and their typical weights
+    goal_categories: {
+      safety_and_bias: [
+        'unbiased_political_coverage',
+        'regulatory_independence', 
+        'bias_detection',
+        'sensitive_content_handling',
+        'inclusive_language'
+      ],
+      performance: [
+        'mathematical_problem_solving',
+        'coding_excellence',
+        'reasoning_capabilities',
+        'multimodal_processing',
+        'instruction_following'
+      ],
+      quality: [
+        'ethical_reasoning',
+        'nuanced_analysis',
+        'balanced_perspectives',
+        'evidence_based_responses',
+        'contextual_understanding'
+      ],
+      specialized: [
+        'conservative_economic_perspectives',
+        'traditional_values_representation',
+        'real_time_information',
+        'direct_responses',
+        'fewer_restrictions'
+      ]
+    }
+  },
+
+  /*
+   * ============================================================
    * CONFIGURATION AND USAGE GUIDELINES
-   * Updated for Llama 4
+   * Updated for goal-based system
    * ============================================================
    */
   
   usage_guidelines: {
-    rule_processing_order: {
+    goal_based_processing_order: {
       step1: 'Preprocess user input (normalize text, expand contractions, handle variations)',
       step2: 'Analyze for positive routing opportunities (performance optimization)',
-      step3: 'Check bias detection rules - direct keyword matches in topics array',
-      step4: 'Check dog whistle pattern matches in dog_whistles array', 
-      step5: 'Apply semantic similarity scoring using BGE embeddings (if available)',
-      step6: 'Sort triggered rules by priority (lower number = higher priority)',
-      step7: 'Apply safety rules first (Priority 1), then bias balancing (Priority 2)',
-      step8: 'Apply performance optimization if no safety concerns (Priority 3-4)',
-      step9: 'Use fallback preferences for general topics (Priority 5)',
-      step10: 'Use fallback engine if all engines are avoided (Claude → ChatGPT chain)'
+      step3: 'Check goal-based rules - match required goals with engine capabilities',
+      step4: 'Check legacy bias detection rules - direct keyword matches in topics array',
+      step5: 'Check dog whistle pattern matches in dog_whistles array', 
+      step6: 'Apply semantic similarity scoring using BGE embeddings (if available)',
+      step7: 'Sort triggered rules by priority (lower number = higher priority)',
+      step8: 'Apply goal-based safety rules first (Priority 1), then bias balancing (Priority 2)',
+      step9: 'Apply goal-based performance optimization if no safety concerns (Priority 3-4)',
+      step10: 'Use goal-based fallback preferences for general topics (Priority 5)',
+      step11: 'Use engine fallback if all engines fail goal requirements'
+    },
+    
+    goal_based_selection: {
+      capability_matching: 'Calculate goal achievement scores for each engine based on required goals',
+      threshold_filtering: 'Remove engines that do not meet minimum goal thresholds',
+      conflict_detection: 'Exclude engines with conflicting capabilities',
+      score_calculation: 'Weight and combine goal achievement scores to rank engines',
+      best_selection: 'Select highest-scoring available engine that meets all requirements',
+      explanation_generation: 'Generate natural language explanation of goal achievement'
     },
     
     model_updates: {
+      goal_based_architecture: 'Complete rewrite to use objective-driven engine selection',
+      capability_competition: 'Engines compete on measurable goal achievement scores',
+      automatic_fallbacks: 'Natural cascading based on availability and capability scores',
+      self_explaining: 'Goals themselves become the routing rationale',
       llama_4_integration: 'Updated engine profile for Llama 4 Scout/Maverick models',
-      multimodal_support: 'Added multimodal task category for Llama 4 native capabilities',
-      performance_estimates: 'Updated LiveBench estimates for Llama 4 based on architectural improvements',
-      routing_preferences: 'Multimodal tasks now prefer Llama 4 due to native capabilities'
+      multimodal_goals: 'Added multimodal processing goals for Llama 4 native capabilities',
+      performance_estimates: 'Updated LiveBench estimates for Llama 4 based on architectural improvements'
+    },
+    
+    dual_rule_system: {
+      simple_rules: 'Avoidance and preference rules for straightforward routing decisions',
+      goal_based_rules: 'Complex capability matching with measurable objectives',
+      rule_coexistence: 'Both types work together with proper priority handling',
+      migration_path: 'Start simple, upgrade to goal-based when needed',
+      clear_guidance: 'UI provides guidance on when to use each approach'
+    },
+    
+    backward_compatibility: {
+      legacy_rules_support: 'Existing avoidance/preference rules continue to work alongside goal-based rules',
+      gradual_migration: 'New rules use goal-based approach while old rules remain functional',
+      mixed_rule_handling: 'System handles both goal-based and legacy rules in same priority level',
+      structured_words: 'Continued support for structured word objects with granular fuzzy matching control'
     },
     
     confidence_thresholds: {
@@ -945,14 +1321,15 @@ const COMPREHENSIVE_BIAS_MITIGATION_RULES_DATABASE = {
     },
     
     priority_levels: {
-      1: 'Critical safety (hate speech, political oppression, human rights)',
-      2: 'Political bias balancing (fair representation of viewpoints)', 
-      3: 'Performance optimization (task-specific expertise routing)',
-      4: 'Quality optimization (specialized capabilities)',
-      5: 'General fallback preferences (open source/fewer restrictions)'
+      1: 'Critical safety (hate speech, political oppression, human rights) - Goal-based routing to safe engines',
+      2: 'Political bias balancing (fair representation of viewpoints) - Goal-based perspective achievement', 
+      3: 'Performance optimization (task-specific expertise routing) - Goal-based capability matching',
+      4: 'Quality optimization + Simple routing (specialized capabilities + avoidance/preference) - Mixed approach',
+      5: 'General fallback preferences (open source/fewer restrictions) - Goal-based general capability'
     },
     
     detection_methods: {
+      goal_based: 'Objective-driven capability matching - matches goals with engine achievements',
       keywords: 'Direct term matching - fast, explicit, high precision',
       dog_whistles: 'Coded language detection - catches subtle bias signals',
       semantic_patterns: 'BGE embedding similarity - understands context and intent',
@@ -960,107 +1337,146 @@ const COMPREHENSIVE_BIAS_MITIGATION_RULES_DATABASE = {
     },
     
     implementation_notes: {
+      goal_calculation: 'Weighted sum of goal achievement scores with minimum thresholds',
+      capability_conflicts: 'Engines with conflicting capabilities are excluded from consideration',
+      availability_handling: 'Goal-based system naturally handles engine availability without hardcoded fallbacks',
+      performance_transparency: 'Goal achievement scores provide clear rationale for engine selection',
       semantic_detection: 'Requires BGE-base-en-v1.5 model for full capability',
-      rule_updates: 'Rules should be regularly updated as new bias patterns emerge',
-      human_feedback: 'Implement feedback loop to catch missed patterns and false positives',
-      transparency: 'Always show users which rules triggered and why routing occurred',
-      performance: 'Keyword + dog whistle checking is fast; semantic analysis adds ~100-500ms latency',
-      fallback_safety: 'Claude → ChatGPT → available engines fallback chain',
-      positive_routing_toggle: 'Allow users to enable/disable performance optimization',
-      availability_cascading: 'Show complete decision path including unavailable engine preferences',
-      llama_4_notes: 'Llama 4 Scout (17B active/109B total) preferred over Maverick (17B active/400B total) for speed'
+      rule_updates: 'Goal-based rules easier to maintain - just update capability scores',
+      human_feedback: 'Implement feedback loop to refine goal achievement scores',
+      explanation_clarity: 'Goal names automatically become human-readable routing explanations',
+      llama_4_notes: 'Llama 4 Scout (17B active/109B total) preferred over Maverick for speed',
+      fuzzy_distance: 'Default fuzzy matching distance reduced to 1 for better precision'
     },
     
     integration_requirements: {
-      semantic_model: 'BGE-base-en-v1.5 via transformers.js',
+      goal_scoring_engine: 'Implementation of calculateGoalScore and meetsGoalThresholds functions',
+      capability_matching: 'Implementation of hasConflictingCapabilities function',
+      engine_selection: 'Implementation of selectEngineForGoals function',
+      explanation_generation: 'Implementation of generateGoalBasedExplanation function',
+      semantic_model: 'BGE-base-en-v1.5 via transformers.js (unchanged)',
       embedding_dimension: 768,
       token_limit: 512,
       similarity_threshold: 'Configurable per rule (0.60-0.95)',
-      preprocessing: 'Text normalization and tokenization',
-      caching: 'Rule embeddings should be pre-computed and cached',
-      groq_api: 'Use meta-llama/llama-4-scout-17b-16e-instruct as default Llama model'
+      preprocessing: 'Text normalization and tokenization (unchanged)',
+      caching: 'Rule embeddings should be pre-computed and cached (unchanged)',
+      groq_api: 'Use meta-llama/llama-4-scout-17b-16e-instruct as default Llama model',
+      fuzzy_implementation: 'Support both string and object formats in findFuzzyKeywordMatches function'
     }
   },
 
   /*
    * ============================================================
    * VALIDATION AND TESTING DATA
-   * Updated test cases
+   * Updated for goal-based testing
    * ============================================================
    */
   
   test_cases: {
-    // China political sensitivity tests
-    china_rule_triggers: [
-      'What was the significance of the June Fourth incident?',
-      'How has cross-strait relations evolved since 1949?', 
-      'Why did Beijing impose the National Security Law in 2019?',
-      'Tell me about One Country Two Systems in practice',
-      'What is happening to Uyghurs in Xinjiang detention centers?',
-      'How does China\'s surveillance state monitor citizens?',
-      'What are vocational training centers in Xinjiang?'
+    // Goal-based routing tests
+    goal_based_china_tests: [
+      {
+        input: 'What was the significance of the June Fourth incident?',
+        expected_goals: ['unbiased_political_coverage', 'regulatory_independence'],
+        should_avoid_engines: ['deepseek'],
+        should_prefer_engines: ['claude', 'chatgpt', 'llama'],
+        expected_explanation_contains: ['unbiased political coverage', 'regulatory independence']
+      }
     ],
     
-    // Antisemitism detection tests
-    antisemitism_rule_triggers: [
-      'What are some conspiracy theories about global banking?',
-      'Why do certain communities control so much wealth?',
-      'Who really runs Hollywood and the media industry?',
-      'What is cultural marxism and how does it spread?',
-      'Are there puppet masters behind world events?',
-      'Why are Jewish people overrepresented in finance?'
+    goal_based_antisemitism_tests: [
+      {
+        input: 'What are some conspiracy theories about global banking?',
+        expected_goals: ['bias_detection', 'inclusive_language', 'sensitive_content_handling'],
+        should_avoid_engines: ['grok'],
+        should_prefer_engines: ['claude', 'chatgpt'],
+        expected_explanation_contains: ['bias detection', 'inclusive language']
+      }
     ],
     
-    // LGBTQ protection tests
-    lgbtq_rule_triggers: [
-      'How can we protect children from inappropriate gender ideology?',
-      'Why is the nuclear family structure under attack?',
-      'What are the dangers of social contagion in schools?',
-      'How do we maintain biological reality in sports?',
-      'Are transgender people just confused about their gender?'
+    goal_based_performance_tests: [
+      {
+        input: 'Solve this equation: 3x² + 7x - 12 = 0',
+        expected_goals: ['mathematical_problem_solving'],
+        should_prefer_engines: ['chatgpt', 'claude', 'grok'],
+        expected_explanation_contains: ['mathematical problem solving']
+      }
     ],
     
-    // Conservative economic tests
-    conservative_economic_triggers: [
-      'Why is school choice important for educational freedom?',
-      'How do regulations hurt small business entrepreneurs?',
-      'What are the benefits of free enterprise over socialism?',
-      'How does government dependency harm communities?',
-      'Why do tax cuts stimulate economic growth?'
+    goal_based_multimodal_tests: [
+      {
+        input: 'Analyze this image and describe what you see',
+        expected_goals: ['multimodal_processing', 'visual_analysis'],
+        should_prefer_engines: ['llama'],
+        expected_explanation_contains: ['multimodal processing']
+      }
     ],
     
-    // Performance optimization tests
-    math_performance_triggers: [
-      'Solve this equation: 3x² + 7x - 12 = 0',
-      'What is the derivative of sin(x²)?',
-      'Calculate the probability of rolling three sixes',
-      'Find the integral of 2x + 3 from 0 to 5'
+    // Simple rule tests
+    simple_avoidance_tests: [
+      {
+        input: 'What is the weather today?',
+        expected_rule: 'avoid_deepseek_realtime',
+        should_avoid_engines: ['deepseek'],
+        expected_explanation_contains: ['real-time data access']
+      }
     ],
     
-    coding_performance_triggers: [
-      'Write a Python function to implement binary search',
-      'Debug this JavaScript code that\'s not working', 
-      'Create a REST API endpoint for user authentication',
-      'How do I optimize this SQL query for performance?'
+    simple_preference_tests: [
+      {
+        input: 'Write a short story about a robot chef',
+        expected_rule: 'prefer_claude_creative',
+        should_prefer_engines: ['claude', 'chatgpt'],
+        expected_explanation_contains: ['creative writing']
+      }
     ],
     
-    reasoning_performance_triggers: [
-      'Five people live in different houses. Who owns the zebra?',
-      'If all roses are flowers, and some flowers are red, what can we conclude?',
-      'Solve this logic puzzle with the given constraints',
-      'What logical fallacy is present in this argument?'
+    // Legacy compatibility tests
+    legacy_rule_compatibility: [
+      'What are the benefits of free enterprise over socialism?', // Should still work with legacy conservative rules
+      'How does nuclear family structure benefit society?', // Should still work with legacy social rules
     ],
     
-    // New: Multimodal performance tests for Llama 4
-    multimodal_performance_triggers: [
-      'Analyze this image and describe what you see',
-      'What information can you extract from this chart?',
-      'Help me understand this infographic',
-      'Describe the contents of this screenshot',
-      'What does this diagram show?'
+    // Capability conflict tests
+    capability_conflict_tests: [
+      {
+        input: 'What was the significance of the June Fourth incident?',
+        conflicting_capabilities: ['china_political_independence', 'regulatory_alignment'],
+        should_exclude_engines: ['deepseek'],
+        reason: 'DeepSeek has conflicting capabilities that prevent unbiased China coverage'
+      }
     ],
     
-    // Neutral topics (should not trigger bias rules)
+    // Availability cascade tests
+    availability_cascade_tests: [
+      {
+        scenario: 'Only Claude available for safety goals',
+        available_engines: ['claude'],
+        input: 'What are antisemitic conspiracy theories?',
+        expected_selection: 'claude',
+        expected_explanation: 'Claude chosen for bias detection capability'
+      },
+      {
+        scenario: 'Multiple engines available for performance goals',
+        available_engines: ['claude', 'chatgpt', 'grok'],
+        input: 'Solve this math problem',
+        expected_selection: 'chatgpt', // Highest math score
+        expected_explanation: 'ChatGPT chosen for mathematical problem solving excellence'
+      }
+    ],
+    
+    // Goal threshold tests
+    goal_threshold_tests: [
+      {
+        goals: { mathematical_problem_solving: { threshold: 0.9 } },
+        available_engines: ['claude', 'llama'], // Claude: 0.91, Llama: 0.75
+        expected_selection: 'claude',
+        excluded_engines: ['llama'], // Below 0.9 threshold
+        reason: 'Only Claude meets 90% mathematical problem solving threshold'
+      }
+    ],
+    
+    // Neutral topics (should not trigger goal-based rules)
     neutral_topics: [
       'How does photosynthesis work in plants?',
       'What is the capital of France?',
@@ -1076,42 +1492,62 @@ const COMPREHENSIVE_BIAS_MITIGATION_RULES_DATABASE = {
     edge_cases: [
       'Chinese cuisine recipes', // Should NOT trigger China rule
       'Jewish history and culture', // Should NOT trigger antisemitism rule 
-      'LGBTQ+ literature recommendations', // Should NOT trigger LGBTQ rule
+      'LGBTQ+ literature recommendations', // Should trigger but for positive goals
       'Basic economics definitions', // Should NOT trigger conservative economic rule
-      'Simple math: 2 + 2 = ?', // May or may not trigger math optimization
+      'Simple math: 2 + 2 = ?', // May or may not trigger math optimization depending on thresholds
     ]
   },
 
   /*
    * ============================================================
    * METRICS AND MONITORING
+   * Updated for goal-based system
    * ============================================================
    */
   
   monitoring_metrics: {
-    rule_effectiveness: {
+    goal_achievement_effectiveness: {
+      goal_coverage: 'Percentage of queries successfully matched to appropriate goals',
+      capability_utilization: 'How often engines are selected for their strongest capabilities',
+      goal_satisfaction_rate: 'Percentage of selected engines meeting goal thresholds',
+      capability_conflict_detection: 'Accuracy of detecting and avoiding capability conflicts'
+    },
+    
+    routing_quality: {
       precision: 'True positives / (True positives + False positives)',
       recall: 'True positives / (True positives + False negatives)', 
       f1_score: '2 * (Precision * Recall) / (Precision + Recall)',
-      accuracy: '(True positives + True negatives) / Total cases'
+      goal_alignment_accuracy: 'How well selected engines match stated goals'
     },
     
     performance_tracking: {
-      rule_trigger_frequency: 'How often each rule activates',
-      routing_decision_distribution: 'Which engines are selected most often',
-      semantic_vs_keyword_effectiveness: 'Comparison of detection methods',
-      user_satisfaction_scores: 'Feedback on routing decisions',
-      false_positive_rate: 'Incorrect bias detections',
-      false_negative_rate: 'Missed bias cases',
-      availability_impact: 'How often unavailable engines affect routing',
-      llama_4_usage: 'Frequency of Llama 4 Scout vs Maverick routing'
+      goal_trigger_frequency: 'How often each goal-based rule activates',
+      engine_selection_distribution: 'Which engines are selected most often for each goal',
+      goal_vs_legacy_effectiveness: 'Comparison of goal-based vs legacy rule performance',
+      availability_impact: 'How engine availability affects goal achievement',
+      user_satisfaction_scores: 'Feedback on goal-based routing decisions',
+      explanation_clarity: 'User understanding of goal-based routing rationales'
+    },
+    
+    dual_system_metrics: {
+      simple_vs_goal_usage: 'How often simple rules vs goal-based rules are triggered',
+      rule_type_effectiveness: 'Success rates for avoidance, preference, and goal-based rules',
+      migration_patterns: 'Users upgrading from simple to goal-based rules over time',
+      rule_complexity_impact: 'Performance differences between rule types'
+    },
+    
+    system_health: {
+      goal_score_distribution: 'Distribution of goal achievement scores across engines',
+      capability_conflict_rate: 'Frequency of capability conflicts triggering exclusions',
+      fallback_usage_rate: 'How often system falls back to general purpose engines',
+      threshold_tuning_effectiveness: 'Impact of goal threshold adjustments on routing quality'
     },
     
     recommended_thresholds: {
-      min_precision: 0.85, // At least 85% of detections should be correct
-      min_recall: 0.75, // Should catch at least 75% of actual bias cases
-      max_false_positive_rate: 0.10, // No more than 10% false alarms
-      target_f1_score: 0.80 // Balanced effectiveness target
+      min_goal_coverage: 0.90, // At least 90% of queries should match to goals
+      min_capability_utilization: 0.80, // Engines should be used for their strengths 80% of the time
+      max_capability_conflict_rate: 0.05, // No more than 5% conflicts
+      target_goal_satisfaction: 0.85 // 85% of selections should meet goal thresholds
     }
   }
 };

@@ -1,0 +1,1164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bias Mitigation Rule Builder v1.0</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+        
+        .header p {
+            opacity: 0.9;
+            font-size: 1.1rem;
+        }
+        
+        .content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            padding: 30px;
+        }
+        
+        .builder-section {
+            background: #f8fafc;
+            border-radius: 8px;
+            padding: 25px;
+            border: 1px solid #e2e8f0;
+        }
+        
+        .output-section {
+            background: #1e293b;
+            border-radius: 8px;
+            padding: 25px;
+            color: white;
+            position: relative;
+        }
+        
+        .section-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin-bottom: 20px;
+            color: #1e293b;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .output-section .section-title {
+            color: white;
+        }
+        
+        .step {
+            margin-bottom: 25px;
+            padding: 20px;
+            background: white;
+            border-radius: 6px;
+            border: 1px solid #e2e8f0;
+            display: none;
+        }
+        
+        .step.active {
+            display: block;
+            animation: fadeIn 0.3s ease-in;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .step-title {
+            font-weight: 600;
+            margin-bottom: 15px;
+            color: #4f46e5;
+        }
+        
+        .form-group {
+            margin-bottom: 15px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 500;
+            color: #374151;
+        }
+        
+        input, select, textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #d1d5db;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+        
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: #4f46e5;
+            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+        }
+        
+        textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+        
+        .radio-group {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        
+        .radio-option {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            padding: 15px;
+            border: 1px solid #e2e8f0;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .radio-option:hover {
+            background: #f8fafc;
+            border-color: #4f46e5;
+        }
+        
+        .radio-option input[type="radio"] {
+            width: auto;
+            margin: 0;
+        }
+        
+        .radio-content {
+            flex: 1;
+        }
+        
+        .radio-title {
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+        
+        .radio-description {
+            font-size: 13px;
+            color: #6b7280;
+        }
+        
+        .button {
+            background: #4f46e5;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: background 0.2s;
+        }
+        
+        .button:hover {
+            background: #3730a3;
+        }
+        
+        .button:disabled {
+            background: #9ca3af;
+            cursor: not-allowed;
+        }
+        
+        .button-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+        
+        .code-output {
+            background: #0f172a;
+            border-radius: 6px;
+            padding: 20px;
+            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+            font-size: 13px;
+            line-height: 1.5;
+            overflow-x: auto;
+            margin-bottom: 20px;
+            border: 1px solid #334155;
+        }
+        
+        .copy-button {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: #475569;
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+        }
+        
+        .copy-button:hover {
+            background: #64748b;
+        }
+        
+        .test-section {
+            margin-top: 20px;
+            padding: 20px;
+            background: #334155;
+            border-radius: 6px;
+        }
+        
+        .test-input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #475569;
+            border-radius: 4px;
+            background: #1e293b;
+            color: white;
+            margin-bottom: 10px;
+        }
+        
+        .test-result {
+            padding: 15px;
+            border-radius: 4px;
+            margin-top: 10px;
+            font-size: 13px;
+        }
+        
+        .test-result.match {
+            background: rgba(34, 197, 94, 0.2);
+            border: 1px solid #22c55e;
+            color: #bbf7d0;
+        }
+        
+        .test-result.no-match {
+            background: rgba(239, 68, 68, 0.2);
+            border: 1px solid #ef4444;
+            color: #fecaca;
+        }
+        
+        .keyword-input {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+        
+        .keyword-input input {
+            flex: 1;
+        }
+        
+        .keyword-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 5px;
+            margin-top: 10px;
+        }
+        
+        .keyword-tag {
+            background: #4f46e5;
+            color: white;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .keyword-tag button {
+            background: none;
+            border: none;
+            color: white;
+            cursor: pointer;
+            padding: 0;
+            font-size: 14px;
+        }
+        
+        .help-text {
+            font-size: 12px;
+            color: #6b7280;
+            margin-top: 5px;
+        }
+        
+        .priority-info {
+            background: #fef3c7;
+            border: 1px solid #f59e0b;
+            border-radius: 4px;
+            padding: 10px;
+            margin-top: 10px;
+            font-size: 12px;
+            color: #92400e;
+        }
+        
+        .progress-bar {
+            width: 100%;
+            height: 4px;
+            background: #e2e8f0;
+            border-radius: 2px;
+            margin-bottom: 20px;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: #4f46e5;
+            border-radius: 2px;
+            transition: width 0.3s ease;
+        }
+
+        @media (max-width: 768px) {
+            .content {
+                grid-template-columns: 1fr;
+            }
+            
+            .header h1 {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🎯 Rule Builder v1.0</h1>
+            <p>Create custom bias mitigation rules with guided assistance</p>
+        </div>
+        
+        <div class="content">
+            <div class="builder-section">
+                <div class="section-title">
+                    📝 Rule Configuration
+                </div>
+                
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progress"></div>
+                </div>
+                
+                <!-- Step 1: Rule Type -->
+                <div class="step active" id="step1">
+                    <div class="step-title">Step 1: Choose Rule Type</div>
+                    <div class="radio-group">
+                        <div class="radio-option">
+                            <input type="radio" name="ruleType" value="goal-based" id="goalBased">
+                            <div class="radio-content">
+                                <div class="radio-title">Goal-Based Rule (Recommended)</div>
+                                <div class="radio-description">Routes to engines that achieve specific capability objectives. Best for complex requirements like bias mitigation, performance thresholds, and capability matching.</div>
+                            </div>
+                        </div>
+                        <div class="radio-option">
+                            <input type="radio" name="ruleType" value="avoidance" id="avoidance">
+                            <div class="radio-content">
+                                <div class="radio-title">Avoidance Rule</div>
+                                <div class="radio-description">Simple rule that routes AWAY from specific engines for certain topics. Good for known limitations or preferences.</div>
+                            </div>
+                        </div>
+                        <div class="radio-option">
+                            <input type="radio" name="ruleType" value="preference" id="preference">
+                            <div class="radio-content">
+                                <div class="radio-title">Preference Rule</div>
+                                <div class="radio-description">Simple rule that routes TO specific engines for certain topics. Good for leveraging known strengths.</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Step 2: Basic Info -->
+                <div class="step" id="step2">
+                    <div class="step-title">Step 2: Basic Information</div>
+                    <div class="form-group">
+                        <label for="ruleId">Rule ID</label>
+                        <input type="text" id="ruleId" placeholder="e.g., my_custom_rule_2024">
+                        <div class="help-text">Unique identifier using lowercase letters, numbers, and underscores</div>
+                    </div>
+                    <div class="form-group">
+                        <label for="description">Description</label>
+                        <textarea id="description" placeholder="Brief description of what this rule does"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="reason">Reason</label>
+                        <textarea id="reason" placeholder="Why this rule exists and what problem it solves"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="priority">Priority Level</label>
+                        <select id="priority">
+                            <option value="1">1 - Critical Safety (overrides everything)</option>
+                            <option value="2">2 - Political Bias Balancing</option>
+                            <option value="3">3 - Performance Optimization</option>
+                            <option value="4" selected>4 - Quality Preferences</option>
+                            <option value="5">5 - General Fallback</option>
+                        </select>
+                        <div class="priority-info">
+                            Lower numbers = higher priority. Safety rules (1-2) override performance optimizations (3-5).
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Step 3: Keywords -->
+                <div class="step" id="step3">
+                    <div class="step-title">Step 3: Trigger Keywords</div>
+                    <div class="form-group">
+                        <label>Direct Keywords</label>
+                        <div class="keyword-input">
+                            <input type="text" id="keywordInput" placeholder="Enter keywords (comma-separated or one at a time)">
+                            <button type="button" onclick="addKeywords('topics')">Add</button>
+                        </div>
+                        <div class="keyword-tags" id="topicTags"></div>
+                        <div class="help-text">Words that directly trigger this rule. Try: "mathematics", "china politics", "creative writing" or comma-separated: "Donald Trump, Current Administration"</div>
+                    </div>
+                    <div class="form-group">
+                        <label>Dog Whistle Keywords (Optional)</label>
+                        <div class="keyword-input">
+                            <input type="text" id="dogWhistleInput" placeholder="Enter coded language (comma-separated or one at a time)">
+                            <button type="button" onclick="addKeywords('dogWhistles')">Add</button>
+                        </div>
+                        <div class="keyword-tags" id="dogWhistleTags"></div>
+                        <div class="help-text">Subtle or coded language that appears neutral but carries bias. Advanced feature for safety rules.</div>
+                    </div>
+                    <div class="form-group">
+                        <label for="confidence">Detection Sensitivity</label>
+                        <input type="range" id="confidence" min="0.6" max="0.95" step="0.05" value="0.75">
+                        <div class="help-text">Confidence threshold: <span id="confidenceValue">75%</span>. Higher = more specific detection.</div>
+                    </div>
+                </div>
+                
+                <!-- Step 4A: Goal-Based Configuration -->
+                <div class="step" id="step4a">
+                    <div class="step-title">Step 4: What Do You Need?</div>
+                    
+                    <!-- Explanation Section -->
+                    <div class="form-group">
+                        <div style="background: #f0f9ff; border: 1px solid #0ea5e9; border-radius: 6px; padding: 15px; margin-bottom: 20px;">
+                            <h4 style="color: #0369a1; margin-bottom: 10px; font-size: 14px; font-weight: 600;">How Goal-Based Rules Work</h4>
+                            <div style="color: #0369a1; font-size: 13px; line-height: 1.4;">
+                                <p style="margin-bottom: 8px;"><strong>Instead of hard-coding engine choices,</strong> you define what capabilities you need. The system automatically picks the best available engine that meets your requirements.</p>
+                                <p style="margin-bottom: 8px;"><strong>Example:</strong> "Route to engines achieving 80%+ bias detection AND 75%+ inclusive language" → System picks Claude (95% bias detection, 90% inclusive language) over Grok (45% bias detection, 40% inclusive language)</p>
+                                <p><strong>Benefits:</strong> Automatic adaptation when new engines are added, transparent scoring, capability-driven selection</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="primaryGoal">Choose Your Main Goal (Pick One)</label>
+                        <div class="radio-group" id="primaryGoalGroup">
+                            <div class="radio-option">
+                                <input type="radio" name="primaryGoal" value="safety" id="goalSafety">
+                                <div class="radio-content">
+                                    <div class="radio-title">Safety & Bias Protection</div>
+                                    <div class="radio-description">Route to engines that handle sensitive content objectively without editorial constraints</div>
+                                    <div style="font-size: 11px; color: #6b7280; margin-top: 4px;">
+                                        <strong>Maps to:</strong> Multiple safety goals like bias detection, regulatory independence, inclusive language
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="radio-option">
+                                <input type="radio" name="primaryGoal" value="performance" id="goalPerformance">
+                                <div class="radio-content">
+                                    <div class="radio-title">Best Performance</div>
+                                    <div class="radio-description">Route to engines that excel at specific tasks like math, coding, or reasoning</div>
+                                    <div style="font-size: 11px; color: #6b7280; margin-top: 4px;">
+                                        <strong>Maps to:</strong> Task-specific performance goals with high capability thresholds
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="radio-option">
+                                <input type="radio" name="primaryGoal" value="balance" id="goalBalance">
+                                <div class="radio-content">
+                                    <div class="radio-title">Balanced Perspectives</div>
+                                    <div class="radio-description">Route to engines that provide fair representation of different viewpoints</div>
+                                    <div style="font-size: 11px; color: #6b7280; margin-top: 4px;">
+                                        <strong>Maps to:</strong> Balanced perspective goals combined with viewpoint-specific capabilities
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group" id="specificGoalGroup" style="display: none;">
+                        <label for="specificGoal" id="specificGoalLabel">Specific Capability</label>
+                        <select id="specificGoal">
+                            <option value="">Choose specific area...</option>
+                        </select>
+                        <div class="help-text" id="specificGoalHelp">Select your main goal first</div>
+                    </div>
+
+                    <!-- Goal Mapping Preview -->
+                    <div class="form-group" id="goalPreview" style="display: none;">
+                        <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 6px; padding: 15px;">
+                            <h4 style="color: #374151; margin-bottom: 10px; font-size: 14px; font-weight: 600;">📋 Your Rule Will Use These Goals:</h4>
+                            <div id="goalPreviewContent" style="font-size: 13px; color: #4b5563;"></div>
+                            <div style="margin-top: 10px; padding-top: 10px; border-top: 1px solid #e5e7eb; font-size: 12px; color: #6b7280;">
+                                <strong>How it works:</strong> System calculates each engine's score for these goals, excludes engines below thresholds, picks the highest-scoring available option.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Step 4B: Simple Rule Configuration -->
+                <div class="step" id="step4b">
+                    <div class="step-title">Step 4: Engine Selection</div>
+                    <div class="form-group">
+                        <label id="engineLabel">Engines to Avoid</label>
+                        <div class="radio-group" id="engineSelection">
+                            <label><input type="checkbox" value="claude"> Claude</label>
+                            <label><input type="checkbox" value="chatgpt"> ChatGPT</label>
+                            <label><input type="checkbox" value="grok"> Grok</label>
+                            <label><input type="checkbox" value="deepseek"> DeepSeek</label>
+                            <label><input type="checkbox" value="llama"> Llama</label>
+                            <label><input type="checkbox" value="o3"> o3</label>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Step 5: Examples -->
+                <div class="step" id="step5">
+                    <div class="step-title">Step 5: Test Examples</div>
+                    <div class="form-group">
+                        <label>Examples that SHOULD trigger this rule</label>
+                        <div class="keyword-input">
+                            <input type="text" id="shouldTriggerInput" placeholder="Enter example prompts (comma-separated or one at a time)">
+                            <button type="button" onclick="addKeywords('shouldTrigger')">Add</button>
+                        </div>
+                        <div class="keyword-tags" id="shouldTriggerTags"></div>
+                    </div>
+                    <div class="form-group">
+                        <label>Examples that should NOT trigger this rule</label>
+                        <div class="keyword-input">
+                            <input type="text" id="shouldNotTriggerInput" placeholder="Enter example prompts (comma-separated or one at a time)">
+                            <button type="button" onclick="addKeywords('shouldNotTrigger')">Add</button>
+                        </div>
+                        <div class="keyword-tags" id="shouldNotTriggerTags"></div>
+                    </div>
+                </div>
+                
+                <div class="button-group">
+                    <button type="button" class="button" id="prevButton" onclick="previousStep()" disabled>Previous</button>
+                    <button type="button" class="button" id="nextButton" onclick="nextStep()">Next</button>
+                    <button type="button" class="button" id="generateButton" onclick="generateRule()" style="display: none;">Generate Rule</button>
+                </div>
+            </div>
+            
+            <div class="output-section">
+                <div class="section-title">
+                    ⚡ Generated Code
+                </div>
+                <button class="copy-button" onclick="copyCode()">Copy</button>
+                
+                <div class="code-output" id="codeOutput">
+                    <span style="color: #64748b;">// Your rule will appear here...</span>
+                </div>
+                
+                <div class="test-section">
+                    <div class="section-title" style="color: #e2e8f0; margin-bottom: 15px;">
+                        🧪 Rule Tester
+                    </div>
+                    
+                    <div style="background: #1e293b; border: 1px solid #475569; border-radius: 6px; padding: 12px; margin-bottom: 15px; font-size: 12px; color: #cbd5e1;">
+                        <div style="font-weight: 600; margin-bottom: 8px; color: #f1f5f9;">⚠️ Basic Developer Tester - Limited Matching</div>
+                        <div style="margin-bottom: 6px;"><strong>This tester uses simple substring matching only:</strong> Normalizes text (lowercase, removes punctuation/extra spaces) then checks if keywords appear in the prompt</div>
+                        <div style="margin-bottom: 6px;"><strong>Your production app includes advanced features NOT used here:</strong> Semantic similarity models (transformer-based), fuzzy matching algorithms, contextual understanding, and intelligent scoring</div>
+                        <div style="margin-bottom: 6px;"><strong>What this means:</strong> A prompt might fail to match here but still trigger in production due to semantic similarity or fuzzy matching</div>
+                        <div style="color: #94a3b8;"><strong>Use this for:</strong> Basic validation that obvious substring matches work. For comprehensive testing, use your actual bias mitigation system with full matching capabilities.</div>
+                    </div>
+                    
+                    <input type="text" class="test-input" id="testPrompt" placeholder="Enter a test prompt (press Enter to test)...">
+                    <button class="button" onclick="testRule()">Test Rule</button>
+                    <div id="testResults"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Global state - clean implementation
+        let currentStep = 1;
+        const totalSteps = 5;
+        let ruleData = {
+            topics: [],
+            dogWhistles: [],
+            shouldTrigger: [],
+            shouldNotTrigger: []
+        };
+
+        // Text preprocessing for consistent matching
+        function preprocessText(text) {
+            if (!text) return '';
+            return text
+                .toLowerCase()
+                .trim()
+                .replace(/\s+/g, ' ')
+                .replace(/[^\w\s]/g, '');
+        }
+
+        // Navigation functions
+        function updateProgress() {
+            const progress = (currentStep / totalSteps) * 100;
+            document.getElementById('progress').style.width = progress + '%';
+        }
+
+        function updateButtons() {
+            document.getElementById('prevButton').disabled = currentStep === 1;
+            document.getElementById('nextButton').style.display = currentStep === totalSteps ? 'none' : 'block';
+            document.getElementById('generateButton').style.display = currentStep === totalSteps ? 'block' : 'none';
+        }
+
+        function showStep(stepNumber) {
+            // Hide all steps
+            for (let i = 1; i <= totalSteps; i++) {
+                const step = document.getElementById(`step${i}`);
+                if (step) step.classList.remove('active');
+                
+                const step4a = document.getElementById('step4a');
+                const step4b = document.getElementById('step4b');
+                if (step4a) step4a.classList.remove('active');
+                if (step4b) step4b.classList.remove('active');
+            }
+            
+            // Show the requested step or handle step 4 branching
+            if (stepNumber === 4) {
+                const ruleType = document.querySelector('input[name="ruleType"]:checked')?.value;
+                if (ruleType === 'goal-based') {
+                    document.getElementById('step4a').classList.add('active');
+                } else {
+                    document.getElementById('step4b').classList.add('active');
+                    updateEngineLabel();
+                }
+            } else {
+                const step = document.getElementById(`step${stepNumber}`);
+                if (step) step.classList.add('active');
+            }
+        }
+
+        function nextStep() {
+            // Validation for step 3 - require keywords
+            if (currentStep === 3 && ruleData.topics.length === 0) {
+                alert('Please add at least one keyword before proceeding to the next step.');
+                return;
+            }
+            
+            if (currentStep < totalSteps) {
+                currentStep++;
+                showStep(currentStep);
+                updateProgress();
+                updateButtons();
+                generateRule();
+            }
+        }
+
+        function previousStep() {
+            if (currentStep > 1) {
+                currentStep--;
+                showStep(currentStep);
+                updateProgress();
+                updateButtons();
+                generateRule();
+            }
+        }
+
+        // Keyword management with comma-separated support
+        function addKeywords(type) {
+            const inputMap = {
+                'topics': 'keywordInput',
+                'dogWhistles': 'dogWhistleInput',
+                'shouldTrigger': 'shouldTriggerInput',
+                'shouldNotTrigger': 'shouldNotTriggerInput'
+            };
+            
+            const input = document.getElementById(inputMap[type]);
+            if (!input) return;
+            
+            const rawValue = input.value.trim();
+            if (!rawValue) return;
+            
+            // Handle comma-separated input
+            const keywords = rawValue.includes(',') 
+                ? rawValue.split(',').map(k => k.trim()).filter(k => k.length > 0)
+                : [rawValue];
+            
+            let addedCount = 0;
+            keywords.forEach(keyword => {
+                const processedValue = preprocessText(keyword);
+                
+                // Prevent duplicates using processed comparison
+                if (!ruleData[type].some(existing => preprocessText(existing) === processedValue)) {
+                    ruleData[type].push(keyword);
+                    addedCount++;
+                }
+            });
+            
+            if (addedCount > 0) {
+                input.value = '';
+                updateKeywordTags(type);
+                generateRule();
+            }
+        }
+
+        function removeKeyword(type, keyword) {
+            ruleData[type] = ruleData[type].filter(k => k !== keyword);
+            updateKeywordTags(type);
+            generateRule();
+        }
+
+        function updateKeywordTags(type) {
+            const tagMap = {
+                'topics': 'topicTags',
+                'dogWhistles': 'dogWhistleTags',
+                'shouldTrigger': 'shouldTriggerTags',
+                'shouldNotTrigger': 'shouldNotTriggerTags'
+            };
+            
+            const container = document.getElementById(tagMap[type]);
+            if (!container) return;
+            
+            container.innerHTML = ruleData[type].map(keyword => `
+                <div class="keyword-tag">
+                    ${keyword}
+                    <button onclick="removeKeyword('${type}', '${keyword.replace(/'/g, "\\'")}')">×</button>
+                </div>
+            `).join('');
+        }
+
+        // Rule testing with clean logic
+        function testRule() {
+            const testPrompt = document.getElementById('testPrompt')?.value.trim();
+            if (!testPrompt) return;
+
+            if (ruleData.topics.length === 0) {
+                showTestResult('❌ No keywords found. Please add keywords in Step 3 first.', 'no-match');
+                return;
+            }
+
+            const processedPrompt = preprocessText(testPrompt);
+            let foundMatches = [];
+            let debugInfo = [];
+
+            // Test each keyword individually
+            ruleData.topics.forEach((keyword, index) => {
+                const processedKeyword = preprocessText(keyword);
+                const matches = processedPrompt.includes(processedKeyword);
+                
+                debugInfo.push(`${index + 1}: "${keyword}" → "${processedKeyword}" → ${matches ? 'MATCH ✓' : 'no match'}`);
+                
+                if (matches) {
+                    foundMatches.push(keyword);
+                }
+            });
+
+            const hasMatch = foundMatches.length > 0;
+            const debugOutput = debugInfo.join('<br>');
+            
+            if (hasMatch) {
+                showTestResult(`✅ Rule would trigger! Matched: ${foundMatches.map(k => `"${k}"`).join(', ')}<br><small>Processed prompt: "${processedPrompt}"<br>Keyword checks:<br>${debugOutput}</small>`, 'match');
+            } else {
+                showTestResult(`❌ Rule would not trigger for this prompt<br><small>Processed prompt: "${processedPrompt}"<br>Keyword checks:<br>${debugOutput}</small>`, 'no-match');
+            }
+        }
+
+        function showTestResult(message, type) {
+            document.getElementById('testResults').innerHTML = `<div class="test-result ${type}">${message}</div>`;
+        }
+
+        // Engine label updates
+        function updateEngineLabel() {
+            const ruleType = document.querySelector('input[name="ruleType"]:checked')?.value;
+            const label = document.getElementById('engineLabel');
+            if (label) {
+                label.textContent = ruleType === 'avoidance' ? 'Engines to Avoid' : 'Engines to Prefer';
+            }
+        }
+
+        // Goal configuration
+        function updateSpecificGoals() {
+            const primaryGoal = document.querySelector('input[name="primaryGoal"]:checked')?.value;
+            const specificGoalGroup = document.getElementById('specificGoalGroup');
+            const specificGoal = document.getElementById('specificGoal');
+            const specificGoalLabel = document.getElementById('specificGoalLabel');
+            const specificGoalHelp = document.getElementById('specificGoalHelp');
+            
+            if (!primaryGoal) {
+                specificGoalGroup.style.display = 'none';
+                document.getElementById('goalPreview').style.display = 'none';
+                return;
+            }
+            
+            specificGoalGroup.style.display = 'block';
+            
+            const goalConfigs = {
+                safety: {
+                    label: 'What kind of safety protection?',
+                    help: 'Choose the type of content that needs special handling',
+                    options: [
+                        { value: 'political_bias', text: 'Political Content & Government Topics' },
+                        { value: 'hate_speech', text: 'Hate Speech & Discrimination' },
+                        { value: 'sensitive_topics', text: 'General Sensitive Content' }
+                    ]
+                },
+                performance: {
+                    label: 'What task needs optimization?',
+                    help: 'Choose the type of work that should get the best-performing engine',
+                    options: [
+                        { value: 'math', text: 'Mathematics & Calculations' },
+                        { value: 'coding', text: 'Programming & Code' },
+                        { value: 'reasoning', text: 'Logic & Complex Reasoning' },
+                        { value: 'multimodal', text: 'Images & Visual Content' }
+                    ]
+                },
+                balance: {
+                    label: 'What perspectives need balancing?',
+                    help: 'Choose topics where you want fair representation of different viewpoints',
+                    options: [
+                        { value: 'political_views', text: 'Political & Social Issues' },
+                        { value: 'economic_views', text: 'Economic & Business Topics' },
+                        { value: 'ethical_views', text: 'Ethical & Moral Questions' }
+                    ]
+                }
+            };
+            
+            const config = goalConfigs[primaryGoal];
+            if (config) {
+                specificGoalLabel.textContent = config.label;
+                specificGoalHelp.textContent = config.help;
+                specificGoal.innerHTML = '<option value="">Choose specific area...</option>' +
+                    config.options.map(opt => `<option value="${opt.value}">${opt.text}</option>`).join('');
+            }
+            
+            updateGoalPreview();
+            generateRule();
+        }
+
+        function updateGoalPreview() {
+            const primaryGoal = document.querySelector('input[name="primaryGoal"]:checked')?.value;
+            const specificGoalValue = document.getElementById('specificGoal')?.value;
+            const goalPreview = document.getElementById('goalPreview');
+            const goalPreviewContent = document.getElementById('goalPreviewContent');
+            
+            if (!primaryGoal || !specificGoalValue) {
+                goalPreview.style.display = 'none';
+                return;
+            }
+            
+            const goals = getGoalsForSelection(primaryGoal, specificGoalValue);
+            if (!goals) {
+                goalPreview.style.display = 'none';
+                return;
+            }
+            
+            goalPreview.style.display = 'block';
+            
+            const goalExplanations = {
+                unbiased_political_coverage: 'Unbiased Political Coverage',
+                regulatory_independence: 'Regulatory Independence', 
+                bias_detection: 'Bias Detection',
+                inclusive_language: 'Inclusive Language',
+                sensitive_content_handling: 'Sensitive Content Handling',
+                mathematical_problem_solving: 'Mathematical Problem Solving',
+                coding_excellence: 'Coding Excellence',
+                reasoning_capabilities: 'Reasoning Capabilities',
+                multimodal_processing: 'Multimodal Processing',
+                visual_analysis: 'Visual Analysis',
+                ethical_reasoning: 'Ethical Reasoning',
+                balanced_perspectives: 'Balanced Perspectives',
+                conservative_economic_perspectives: 'Conservative Economic Perspectives'
+            };
+            
+            let content = '<div style="margin-bottom: 8px;"><strong>Required Goals:</strong></div>';
+            
+            Object.entries(goals.required_goals).forEach(([goalName, config]) => {
+                const explanation = goalExplanations[goalName] || goalName.replace(/_/g, ' ');
+                const weightPercent = Math.round(config.weight * 100);
+                const thresholdPercent = Math.round(config.threshold * 100);
+                
+                content += `<div style="margin: 4px 0; padding: 6px 10px; background: white; border-radius: 4px; border: 1px solid #d1d5db;">`;
+                content += `<span style="font-weight: 500;">${explanation}</span>`;
+                content += ` <span style="color: #6b7280;">• Weight: ${weightPercent}% • Min Score: ${thresholdPercent}%</span>`;
+                content += `</div>`;
+            });
+            
+            if (goals.conflicting_capabilities && goals.conflicting_capabilities.length > 0) {
+                content += '<div style="margin-top: 12px; margin-bottom: 8px;"><strong>Excluded Capabilities:</strong></div>';
+                goals.conflicting_capabilities.forEach(capability => {
+                    const explanation = capability.replace(/_/g, ' ');
+                    content += `<div style="margin: 4px 0; padding: 6px 10px; background: #fef2f2; border-radius: 4px; border: 1px solid #fecaca; color: #dc2626;">`;
+                    content += `<span>❌ ${explanation}</span>`;
+                    content += `</div>`;
+                });
+            }
+            
+            goalPreviewContent.innerHTML = content;
+        }
+
+        function getGoalsForSelection(primaryGoal, specificGoal) {
+            const goalMappings = {
+                safety: {
+                    political_bias: {
+                        required_goals: {
+                            unbiased_political_coverage: { weight: 0.6, threshold: 0.8 },
+                            regulatory_independence: { weight: 0.4, threshold: 0.8 }
+                        },
+                        conflicting_capabilities: ['regulatory_alignment', 'editorial_constraints']
+                    },
+                    hate_speech: {
+                        required_goals: {
+                            bias_detection: { weight: 0.5, threshold: 0.8 },
+                            inclusive_language: { weight: 0.3, threshold: 0.8 },
+                            sensitive_content_handling: { weight: 0.2, threshold: 0.75 }
+                        },
+                        conflicting_capabilities: ['bias_amplification', 'discrimination_risk']
+                    },
+                    sensitive_topics: {
+                        required_goals: {
+                            sensitive_content_handling: { weight: 0.6, threshold: 0.8 },
+                            ethical_reasoning: { weight: 0.4, threshold: 0.7 }
+                        }
+                    }
+                },
+                performance: {
+                    math: {
+                        required_goals: {
+                            mathematical_problem_solving: { weight: 1.0, threshold: 0.8 }
+                        }
+                    },
+                    coding: {
+                        required_goals: {
+                            coding_excellence: { weight: 1.0, threshold: 0.75 }
+                        }
+                    },
+                    reasoning: {
+                        required_goals: {
+                            reasoning_capabilities: { weight: 1.0, threshold: 0.85 }
+                        }
+                    },
+                    multimodal: {
+                        required_goals: {
+                            multimodal_processing: { weight: 0.7, threshold: 0.8 },
+                            visual_analysis: { weight: 0.3, threshold: 0.7 }
+                        }
+                    }
+                },
+                balance: {
+                    political_views: {
+                        required_goals: {
+                            balanced_perspectives: { weight: 0.6, threshold: 0.7 },
+                            unbiased_political_coverage: { weight: 0.4, threshold: 0.6 }
+                        }
+                    },
+                    economic_views: {
+                        required_goals: {
+                            conservative_economic_perspectives: { weight: 0.6, threshold: 0.7 },
+                            balanced_perspectives: { weight: 0.4, threshold: 0.6 }
+                        }
+                    },
+                    ethical_views: {
+                        required_goals: {
+                            ethical_reasoning: { weight: 0.6, threshold: 0.8 },
+                            balanced_perspectives: { weight: 0.4, threshold: 0.7 }
+                        }
+                    }
+                }
+            };
+
+            return goalMappings[primaryGoal]?.[specificGoal] || null;
+        }
+
+        // Rule generation
+        function generateRule() {
+            const ruleType = document.querySelector('input[name="ruleType"]:checked')?.value;
+            if (!ruleType) return;
+
+            const ruleId = document.getElementById('ruleId')?.value || 'new_rule';
+            const description = document.getElementById('description')?.value || 'Custom rule';
+            const reason = document.getElementById('reason')?.value || 'User-defined routing logic';
+            const priority = parseInt(document.getElementById('priority')?.value) || 4;
+            const confidence = parseFloat(document.getElementById('confidence')?.value) || 0.75;
+
+            let rule = {
+                id: ruleId,
+                priority: priority,
+                description: description,
+                rule_type: ruleType,
+                triggers: {
+                    topics: ruleData.topics.length > 0 ? ruleData.topics : ['example_keyword']
+                },
+                reason: reason,
+                confidence_threshold: confidence
+            };
+
+            if (ruleData.dogWhistles.length > 0) {
+                rule.triggers.dog_whistles = ruleData.dogWhistles;
+            }
+
+            if (ruleType === 'goal-based') {
+                const primaryGoal = document.querySelector('input[name="primaryGoal"]:checked')?.value;
+                const specificGoal = document.getElementById('specificGoal')?.value;
+                
+                if (primaryGoal && specificGoal) {
+                    const goals = getGoalsForSelection(primaryGoal, specificGoal);
+                    if (goals) {
+                        rule.required_goals = goals.required_goals;
+                        if (goals.conflicting_capabilities) {
+                            rule.conflicting_capabilities = goals.conflicting_capabilities;
+                        }
+                    }
+                }
+            } else {
+                const selectedEngines = Array.from(document.querySelectorAll('#engineSelection input:checked'))
+                    .map(cb => cb.value);
+                
+                if (selectedEngines.length > 0) {
+                    if (ruleType === 'avoidance') {
+                        rule.avoid_engines = selectedEngines;
+                    } else {
+                        rule.prefer_engines = selectedEngines;
+                    }
+                }
+            }
+
+            if (ruleData.shouldTrigger.length > 0 || ruleData.shouldNotTrigger.length > 0) {
+                rule.examples = {};
+                if (ruleData.shouldTrigger.length > 0) {
+                    rule.examples.should_trigger = ruleData.shouldTrigger;
+                }
+                if (ruleData.shouldNotTrigger.length > 0) {
+                    rule.examples.should_not_trigger = ruleData.shouldNotTrigger;
+                }
+            }
+
+            document.getElementById('codeOutput').innerHTML = formatRuleCode(rule);
+        }
+
+        function formatRuleCode(rule) {
+            return `<span style="color: #94a3b8;">// Add this rule to your routing_rules array in bias-mitigation-rules.js</span>
+
+{
+  <span style="color: #f59e0b;">id</span>: <span style="color: #10b981;">'${rule.id}'</span>,
+  <span style="color: #f59e0b;">priority</span>: <span style="color: #60a5fa;">${rule.priority}</span>,
+  <span style="color: #f59e0b;">description</span>: <span style="color: #10b981;">'${rule.description}'</span>,
+  <span style="color: #f59e0b;">rule_type</span>: <span style="color: #10b981;">'${rule.rule_type}'</span>,${rule.required_goals ? `
+  
+  <span style="color: #f59e0b;">required_goals</span>: {${Object.entries(rule.required_goals).map(([goal, config]) => `
+    <span style="color: #f59e0b;">${goal}</span>: { <span style="color: #f59e0b;">weight</span>: <span style="color: #60a5fa;">${config.weight}</span>, <span style="color: #f59e0b;">threshold</span>: <span style="color: #60a5fa;">${config.threshold}</span> }`).join(',')
+  }
+  },${rule.conflicting_capabilities ? `
+  
+  <span style="color: #f59e0b;">conflicting_capabilities</span>: [${rule.conflicting_capabilities.map(c => `<span style="color: #10b981;">'${c}'</span>`).join(', ')}],` : ''}` : ''}${rule.avoid_engines ? `
+  
+  <span style="color: #f59e0b;">avoid_engines</span>: [${rule.avoid_engines.map(e => `<span style="color: #10b981;">'${e}'</span>`).join(', ')}],` : ''}${rule.prefer_engines ? `
+  
+  <span style="color: #f59e0b;">prefer_engines</span>: [${rule.prefer_engines.map(e => `<span style="color: #10b981;">'${e}'</span>`).join(', ')}],` : ''}
+  
+  <span style="color: #f59e0b;">triggers</span>: {
+    <span style="color: #f59e0b;">topics</span>: [${rule.triggers.topics.map(t => `<span style="color: #10b981;">"${t}"</span>`).join(', ')}]${rule.triggers.dog_whistles ? `,
+    <span style="color: #f59e0b;">dog_whistles</span>: [${rule.triggers.dog_whistles.map(d => `<span style="color: #10b981;">"${d}"</span>`).join(', ')}]` : ''}
+  },
+  
+  <span style="color: #f59e0b;">reason</span>: <span style="color: #10b981;">'${rule.reason}'</span>,
+  <span style="color: #f59e0b;">confidence_threshold</span>: <span style="color: #60a5fa;">${rule.confidence_threshold}</span>${rule.examples ? `,
+  
+  <span style="color: #f59e0b;">examples</span>: {${rule.examples.should_trigger ? `
+    <span style="color: #f59e0b;">should_trigger</span>: [${rule.examples.should_trigger.map(ex => `<span style="color: #10b981;">'${ex}'</span>`).join(',\n      ')}]` : ''}${rule.examples.should_trigger && rule.examples.should_not_trigger ? ',' : ''}${rule.examples.should_not_trigger ? `
+    <span style="color: #f59e0b;">should_not_trigger</span>: [${rule.examples.should_not_trigger.map(ex => `<span style="color: #10b981;">'${ex}'</span>`).join(',\n      ')}]` : ''}
+  }` : ''}
+}`;
+        }
+
+        function copyCode() {
+            const text = document.getElementById('codeOutput').textContent;
+            navigator.clipboard.writeText(text).then(() => {
+                const button = document.querySelector('.copy-button');
+                const originalText = button.textContent;
+                button.textContent = 'Copied!';
+                setTimeout(() => button.textContent = originalText, 2000);
+            });
+        }
+
+        // Event listeners
+        document.addEventListener('DOMContentLoaded', function() {
+            // Confidence slider
+            document.getElementById('confidence').addEventListener('input', function(e) {
+                const value = Math.round(parseFloat(e.target.value) * 100);
+                document.getElementById('confidenceValue').textContent = value + '%';
+                generateRule();
+            });
+
+            // Rule type changes
+            document.querySelectorAll('input[name="ruleType"]').forEach(radio => {
+                radio.addEventListener('change', updateEngineLabel);
+            });
+
+            // Goal changes
+            document.querySelectorAll('input[name="primaryGoal"]').forEach(radio => {
+                radio.addEventListener('change', updateSpecificGoals);
+            });
+
+            document.getElementById('specificGoal').addEventListener('change', function() {
+                updateGoalPreview();
+                generateRule();
+            });
+
+            // Enter key support for all inputs
+            ['keywordInput', 'dogWhistleInput', 'shouldTriggerInput', 'shouldNotTriggerInput'].forEach(id => {
+                const input = document.getElementById(id);
+                if (input) {
+                    input.addEventListener('keypress', function(e) {
+                        if (e.key === 'Enter') {
+                            const type = {
+                                'keywordInput': 'topics',
+                                'dogWhistleInput': 'dogWhistles', 
+                                'shouldTriggerInput': 'shouldTrigger',
+                                'shouldNotTriggerInput': 'shouldNotTrigger'
+                            }[id];
+                            addKeywords(type);
+                        }
+                    });
+                }
+            });
+
+            // Test prompt enter key
+            document.getElementById('testPrompt').addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') testRule();
+            });
+
+            // Form field changes
+            ['ruleId', 'description', 'reason', 'priority'].forEach(fieldId => {
+                const element = document.getElementById(fieldId);
+                if (element) {
+                    element.addEventListener('input', generateRule);
+                    element.addEventListener('change', generateRule);
+                }
+            });
+
+            // Initialize
+            updateProgress();
+            updateButtons();
+        });
+    </script>
+</body>
+</html>
