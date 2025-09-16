@@ -15,6 +15,18 @@
 
 ---
 
+
+## 🎥 Live Demo
+
+**See the system in action** - 36-second walkthrough showing semantic bias detection and intelligent routing:
+
+[![Mixture of Voices Demo](https://img.shields.io/badge/▶️-Watch%20Demo%20Video-red?style=for-the-badge&logo=vimeo)](https://vimeo.com/1119169358?share=copy#t=0)
+
+*Watch real-time bias detection, semantic analysis, and transparent engine routing decisions*
+
+---
+
+
 ## Architecture Overview
 
 ```
